@@ -1,0 +1,12 @@
+{
+  "name": "daily-app-generator",
+  "version": "1.0.0",
+  "description": "매일 자동으로 새로운 앱을 생성합니다",
+  "main": "index.js",
+  "scripts": {
+    "generate": "node scripts/generate-app.js"
+  },
+  "keywords": ["app-generator", "automation"],
+  "author": "Your Name",
+  "license": "MIT"
+}
