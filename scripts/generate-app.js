@@ -968,7 +968,7 @@ function generateGameProjectile(trend) {
                 const y = 300 - (vy * t - 0.5 * g * t * t) * scale;
                 
                 if (y > 300) break; // 지면 도달
-                pathData += ` L ${x} ${y}`;
+                pathData += ' L ' + x + ' ' + y;
             }
             
             path.setAttribute('d', pathData);
