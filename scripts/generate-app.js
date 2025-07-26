@@ -841,15 +841,12 @@ function generateTaxiSpeed() {
                 // 미터기 업데이트
                 document.getElementById('distance').textContent = 
                     currentDistance.toFixed(1) + ' km';
-                document.getElementById('time').textContent = 
-                    formatTime(currentTime);
-                document.getElementById('currentSpeed').textContent = 
-                    Math.max(0, currentSpeed).toFixed(0) + ' km/h';
+                document.getElementById('time').textContent = formatTime(currentTime);
+                document.getElementById('currentSpeed').textContent = Math.max(0, currentSpeed).toFixed(0) + ' km/h';
                 
                 // 요금 계산 (기본요금 3800원 + 132m당 100원)
                 const fare = 3800 + Math.floor(currentDistance * 1000 / 132) * 100;
-                document.getElementById('fare').textContent = 
-                    '₩' + fare.toLocaleString();
+                document.getElementById('fare').textContent = '₩' + fare.toLocaleString();
                 
                 // 목적지 도착
                 if (currentDistance >= targetDistance) {
@@ -862,15 +859,14 @@ function generateTaxiSpeed() {
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
-            return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+            return String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
         }
         
         function showResults(distance, time, fare) {
             const avgSpeed = (distance / (time / 3600)).toFixed(1);
             
             document.getElementById('totalDistance').textContent = distance + ' km';
-            document.getElementById('totalTime').textContent = 
-                Math.round(time / 60) + '분 ' + (time % 60) + '초';
+            document.getElementById('totalTime').textContent = Math.round(time / 60) + '분 ' + (time % 60) + '초';
             document.getElementById('avgSpeedResult').textContent = avgSpeed + ' km/h';
             document.getElementById('totalFare').textContent = '₩' + fare.toLocaleString();
             
