@@ -1,0 +1,27 @@
+{
+  "date": "2025-07-26",
+  "theme": "공대생을 위한 실용적 도구",
+  "apps": [
+    {
+      "id": "app1",
+      "name": "정렬 알고리즘 비교",
+      "description": "다양한 정렬 알고리즘의 성능을 시각적으로 비교합니다",
+      "category": "programming",
+      "type": "visualizer"
+    },
+    {
+      "id": "app2",
+      "name": "포모도로 공부 타이머",
+      "description": "공대생을 위한 맞춤형 포모도로 타이머와 통계",
+      "category": "study",
+      "type": "productivity"
+    },
+    {
+      "id": "app3",
+      "name": "실험 데이터 분석기",
+      "description": "실험 데이터의 평균, 표준편차, 그래프를 자동 생성합니다",
+      "category": "practical",
+      "type": "analyzer"
+    }
+  ]
+}

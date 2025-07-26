@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>프로야구 팀 응원 카운터</title>
+    <title>공대생 포모도로 타이머</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -19,150 +19,279 @@
             background: white;
             border-radius: 30px;
             padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
             width: 100%;
             text-align: center;
         }
         h1 {
-            font-size: 2.5rem;
+            color: #333;
             margin-bottom: 30px;
-            color: #333;
         }
-        .teams {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin: 30px 0;
-        }
-        .team {
-            padding: 30px;
-            border-radius: 20px;
-            transition: transform 0.3s;
-            cursor: pointer;
-        }
-        .team:hover {
-            transform: translateY(-5px);
-        }
-        .team1 {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-        .team2 {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            color: white;
-        }
-        .team-name {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-        .support-count {
-            font-size: 3rem;
+        .timer-display {
+            font-size: 5rem;
             font-weight: bold;
-            margin: 20px 0;
+            color: #1e3c72;
+            margin: 30px 0;
+            font-family: 'Courier New', monospace;
         }
-        .support-btn {
-            background: white;
-            color: #333;
+        .timer-ring {
+            width: 250px;
+            height: 250px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+        .timer-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        .timer-ring circle {
+            fill: none;
+            stroke-width: 10;
+        }
+        .timer-ring-bg {
+            stroke: #e0e0e0;
+        }
+        .timer-ring-progress {
+            stroke: #4CAF50;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s linear;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        button {
+            padding: 12px 30px;
             border: none;
-            padding: 10px 30px;
             border-radius: 25px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s;
+            font-weight: 600;
         }
-        .support-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        .start-btn {
+            background: #4CAF50;
+            color: white;
         }
-        .total-supporters {
+        .start-btn:hover {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+        .pause-btn {
+            background: #ff9800;
+            color: white;
+        }
+        .reset-btn {
+            background: #f44336;
+            color: white;
+        }
+        .session-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
             margin-top: 30px;
+        }
+        .info-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .info-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .info-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+        .subjects {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .subject-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: #f9f9f9;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+        .phase {
             font-size: 1.2rem;
             color: #666;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-        .bounce {
-            animation: bounce 0.5s ease;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🏆 프로야구 응원 배틀</h1>
+        <h1>🍅 공대생 포모도로 타이머</h1>
         
-        <div class="teams">
-            <div class="team team1" onclick="support(1)">
-                <h2 class="team-name">팀 A</h2>
-                <div class="support-count" id="count1">0</div>
-                <button class="support-btn">응원하기 📣</button>
-            </div>
-            
-            <div class="team team2" onclick="support(2)">
-                <h2 class="team-name">팀 B</h2>
-                <div class="support-count" id="count2">0</div>
-                <button class="support-btn">응원하기 📣</button>
+        <div class="phase" id="phase">집중 시간</div>
+        
+        <div class="timer-ring">
+            <svg>
+                <circle class="timer-ring-bg" cx="125" cy="125" r="120"></circle>
+                <circle class="timer-ring-progress" id="progress" cx="125" cy="125" r="120"
+                        stroke-dasharray="754" stroke-dashoffset="0"></circle>
+            </svg>
+            <div class="timer-display" id="timer" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                25:00
             </div>
         </div>
         
-        <div class="total-supporters">
-            총 <span id="totalCount">0</span>명이 응원 중!
+        <div class="controls">
+            <button class="start-btn" id="startBtn" onclick="startTimer()">시작</button>
+            <button class="pause-btn" id="pauseBtn" onclick="pauseTimer()" style="display: none;">일시정지</button>
+            <button class="reset-btn" onclick="resetTimer()">리셋</button>
+        </div>
+        
+        <div class="session-info">
+            <div class="info-box">
+                <div class="info-label">오늘 완료</div>
+                <div class="info-value" id="todayCount">0</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label">총 공부 시간</div>
+                <div class="info-value" id="totalTime">0시간</div>
+            </div>
+            <div class="info-box">
+                <div class="info-label">현재 스트릭</div>
+                <div class="info-value" id="streak">0일</div>
+            </div>
+        </div>
+        
+        <div class="subjects">
+            <h3>과목별 공부 시간</h3>
+            <div class="subject-item">
+                <span>미적분학</span>
+                <span>2.5시간</span>
+            </div>
+            <div class="subject-item">
+                <span>물리학</span>
+                <span>1.8시간</span>
+            </div>
+            <div class="subject-item">
+                <span>프로그래밍</span>
+                <span>3.2시간</span>
+            </div>
         </div>
     </div>
     
     <script>
-        // 로컬 스토리지에서 응원 데이터 가져오기
-        const supportKey = 'teamSupport_프로야구';
-        let supportData = JSON.parse(localStorage.getItem(supportKey) || '{"team1": 0, "team2": 0}');
+        let timeLeft = 25 * 60; // 25분
+        let isRunning = false;
+        let interval;
+        let isBreak = false;
+        let sessionsCompleted = 0;
         
-        // 초기값에 랜덤 추가 (더 현실적으로)
-        if (supportData.team1 === 0 && supportData.team2 === 0) {
-            supportData.team1 = Math.floor(Math.random() * 50) + 10;
-            supportData.team2 = Math.floor(Math.random() * 50) + 10;
-        }
+        const circumference = 2 * Math.PI * 120;
         
         function updateDisplay() {
-            document.getElementById('count1').textContent = supportData.team1;
-            document.getElementById('count2').textContent = supportData.team2;
-            document.getElementById('totalCount').textContent = supportData.team1 + supportData.team2;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            // 프로그레스 링 업데이트
+            const totalTime = isBreak ? 5 * 60 : 25 * 60;
+            const progress = (totalTime - timeLeft) / totalTime;
+            const offset = circumference - (progress * circumference);
+            document.getElementById('progress').style.strokeDashoffset = offset;
         }
         
-        function support(team) {
-            const countEl = document.getElementById('count' + team);
-            countEl.classList.add('bounce');
-            
-            if (team === 1) {
-                supportData.team1++;
-            } else {
-                supportData.team2++;
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('pauseBtn').style.display = 'inline-block';
+                
+                interval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateDisplay();
+                    } else {
+                        // 타이머 종료
+                        clearInterval(interval);
+                        isRunning = false;
+                        
+                        if (!isBreak) {
+                            sessionsCompleted++;
+                            document.getElementById('todayCount').textContent = sessionsCompleted;
+                            
+                            // 휴식 시간으로 전환
+                            isBreak = true;
+                            timeLeft = 5 * 60;
+                            document.getElementById('phase').textContent = '휴식 시간';
+                            document.getElementById('progress').style.stroke = '#2196F3';
+                            
+                            // 알림
+                            alert('수고하셨습니다! 5분 휴식하세요.');
+                        } else {
+                            // 집중 시간으로 전환
+                            isBreak = false;
+                            timeLeft = 25 * 60;
+                            document.getElementById('phase').textContent = '집중 시간';
+                            document.getElementById('progress').style.stroke = '#4CAF50';
+                            
+                            alert('휴식 끝! 다시 집중해봅시다.');
+                        }
+                        
+                        updateDisplay();
+                        document.getElementById('startBtn').style.display = 'inline-block';
+                        document.getElementById('pauseBtn').style.display = 'none';
+                    }
+                }, 1000);
             }
-            
-            localStorage.setItem(supportKey, JSON.stringify(supportData));
+        }
+        
+        function pauseTimer() {
+            if (isRunning) {
+                clearInterval(interval);
+                isRunning = false;
+                document.getElementById('startBtn').style.display = 'inline-block';
+                document.getElementById('pauseBtn').style.display = 'none';
+            }
+        }
+        
+        function resetTimer() {
+            clearInterval(interval);
+            isRunning = false;
+            isBreak = false;
+            timeLeft = 25 * 60;
+            document.getElementById('phase').textContent = '집중 시간';
+            document.getElementById('progress').style.stroke = '#4CAF50';
             updateDisplay();
-            
-            setTimeout(() => {
-                countEl.classList.remove('bounce');
-            }, 500);
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('pauseBtn').style.display = 'none';
         }
         
-        // 초기 표시
-        updateDisplay();
-        
-        // 실시간 업데이트 시뮬레이션
-        setInterval(() => {
-            // 가끔 다른 사용자가 투표하는 것처럼
-            if (Math.random() < 0.1) {
-                const randomTeam = Math.random() < 0.5 ? 1 : 2;
-                if (randomTeam === 1) {
-                    supportData.team1++;
-                } else {
-                    supportData.team2++;
-                }
-                updateDisplay();
+        // 로컬 스토리지에서 통계 불러오기
+        function loadStats() {
+            const stats = JSON.parse(localStorage.getItem('pomodoroStats') || '{}');
+            const today = new Date().toDateString();
+            
+            if (stats.lastDate !== today) {
+                stats.todayCount = 0;
+                stats.lastDate = today;
             }
-        }, 3000);
+            
+            sessionsCompleted = stats.todayCount || 0;
+            document.getElementById('todayCount').textContent = sessionsCompleted;
+            
+            const totalHours = Math.floor((stats.totalSessions || 0) * 25 / 60);
+            document.getElementById('totalTime').textContent = totalHours + '시간';
+        }
+        
+        // 초기화
+        updateDisplay();
+        loadStats();
     </script>
 </body>
 </html>

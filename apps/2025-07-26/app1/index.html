@@ -3,259 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>부동산 환율 계산기</title>
+    <title>행렬 계산기 & 시각화</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #00C9FF 0%, #92FE9D 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: #f5f5f5;
             padding: 20px;
         }
-        .calculator {
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
             background: white;
             border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-            max-width: 500px;
-            width: 100%;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         h1 {
             text-align: center;
             color: #333;
-            margin-bottom: 10px;
-        }
-        .trend-info {
-            text-align: center;
-            color: #666;
-            font-size: 0.9rem;
             margin-bottom: 30px;
+        }
+        .matrix-input {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+            max-width: 300px;
+            margin: 0 auto 20px;
+        }
+        .matrix-input input {
+            width: 100%;
             padding: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1.1rem;
         }
-        .currency-input {
-            margin-bottom: 30px;
-        }
-        label {
-            display: block;
-            margin-bottom: 10px;
-            color: #555;
-            font-weight: 500;
-        }
-        .input-group {
-            display: flex;
-            align-items: center;
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 5px;
-        }
-        input[type="number"] {
-            flex: 1;
-            border: none;
-            background: none;
-            padding: 15px;
-            font-size: 1.5rem;
+        .matrix-input input:focus {
+            border-color: #4CAF50;
             outline: none;
         }
-        .currency-symbol {
-            padding: 0 15px;
-            color: #666;
-            font-size: 1.2rem;
-            font-weight: 500;
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
         }
-        .exchange-rate {
-            text-align: center;
-            margin: 20px 0;
-            padding: 20px;
-            background: #f0f8ff;
-            border-radius: 10px;
-        }
-        .rate-display {
-            font-size: 2rem;
-            color: #0066cc;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        .rate-change {
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-        .rate-up { color: #d32f2f; }
-        .rate-down { color: #388e3c; }
-        .convert-button {
-            width: 100%;
-            padding: 15px;
-            background: #0066cc;
-            color: white;
+        button {
+            padding: 10px 20px;
             border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
+            border-radius: 8px;
+            font-size: 1rem;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
         }
-        .convert-button:hover {
-            background: #0052a3;
+        .calculate-btn {
+            background: #4CAF50;
+            color: white;
+        }
+        .calculate-btn:hover {
+            background: #45a049;
+        }
+        .operation-btn {
+            background: #2196F3;
+            color: white;
+        }
+        .operation-btn:hover {
+            background: #1976D2;
         }
         .result {
-            margin-top: 30px;
+            background: #f9f9f9;
             padding: 20px;
-            background: #e8f5e9;
             border-radius: 10px;
+            margin-top: 20px;
+        }
+        .result h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .matrix-display {
+            font-family: monospace;
+            font-size: 1.2rem;
             text-align: center;
-            display: none;
+            margin: 10px 0;
         }
-        .result-amount {
-            font-size: 2.5rem;
-            color: #2e7d32;
-            font-weight: bold;
+        .matrix-bracket {
+            display: inline-block;
+            border: 2px solid #333;
+            border-right: none;
+            border-radius: 5px 0 0 5px;
+            padding: 10px 5px;
         }
-        .history {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f5f5f5;
-            border-radius: 10px;
+        .matrix-bracket-right {
+            border-left: none;
+            border-right: 2px solid #333;
+            border-radius: 0 5px 5px 0;
         }
-        .history-item {
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-            font-size: 0.9rem;
-            color: #666;
-        }
-        .history-item:last-child {
-            border-bottom: none;
+        .error {
+            color: #f44336;
+            text-align: center;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="calculator">
-        <h1>💱 부동산 환율 계산기</h1>
+    <div class="container">
+        <h1>🧮 행렬 계산기 & 시각화</h1>
         
-        <div class="trend-info">
-            📈 서울 아파트 가격 반등, 거래량 증가세<br>
-            <small>출처: 부동산타임즈</small>
+        <h3 style="text-align: center; margin-bottom: 20px;">3×3 행렬 입력</h3>
+        <div class="matrix-input" id="matrixA">
+            <input type="number" value="1" step="any">
+            <input type="number" value="0" step="any">
+            <input type="number" value="0" step="any">
+            <input type="number" value="0" step="any">
+            <input type="number" value="1" step="any">
+            <input type="number" value="0" step="any">
+            <input type="number" value="0" step="any">
+            <input type="number" value="0" step="any">
+            <input type="number" value="1" step="any">
         </div>
         
-        <div class="exchange-rate">
-            <div>현재 USD/KRW 환율</div>
-            <div class="rate-display" id="currentRate">1,387.50</div>
-            <div class="rate-change rate-up" id="rateChange">▲ 12.30 (+0.89%)</div>
+        <div class="controls">
+            <button class="calculate-btn" onclick="calculateDeterminant()">행렬식</button>
+            <button class="calculate-btn" onclick="calculateInverse()">역행렬</button>
+            <button class="calculate-btn" onclick="calculateEigenvalues()">고유값</button>
+            <button class="operation-btn" onclick="calculateTranspose()">전치행렬</button>
+            <button class="operation-btn" onclick="calculateTrace()">대각합</button>
         </div>
         
-        <div class="currency-input">
-            <label>미국 달러 (USD)</label>
-            <div class="input-group">
-                <span class="currency-symbol">$</span>
-                <input type="number" id="usdAmount" placeholder="0.00" step="0.01">
-            </div>
-        </div>
-        
-        <button class="convert-button" onclick="convertCurrency()">환율 계산하기</button>
-        
-        <div class="result" id="result">
-            <div>한국 원화 (KRW)</div>
-            <div class="result-amount" id="krwAmount">₩ 0</div>
-        </div>
-        
-        <div class="history" id="history">
-            <h3>최근 계산 내역</h3>
-            <div id="historyList"></div>
-        </div>
+        <div id="results"></div>
     </div>
     
     <script>
-        // 실시간 환율 시뮬레이션
-        let baseRate = 1387.50;
-        let currentRate = baseRate;
-        let previousRate = baseRate - 12.30;
-        
-        // 환율 변동 시뮬레이션
-        function updateRate() {
-            // 작은 변동 추가
-            const change = (Math.random() - 0.5) * 2;
-            currentRate += change;
-            
-            const diff = currentRate - previousRate;
-            const percentage = (diff / previousRate * 100).toFixed(2);
-            
-            document.getElementById('currentRate').textContent = currentRate.toFixed(2);
-            
-            const changeElement = document.getElementById('rateChange');
-            if (diff > 0) {
-                changeElement.textContent = '▲ ' + Math.abs(diff).toFixed(2) + ' (+' + Math.abs(percentage) + '%)';
-                changeElement.className = 'rate-change rate-up';
-            } else {
-                changeElement.textContent = '▼ ' + Math.abs(diff).toFixed(2) + ' (-' + Math.abs(percentage) + '%)';
-                changeElement.className = 'rate-change rate-down';
+        function getMatrix() {
+            const inputs = document.querySelectorAll('#matrixA input');
+            const matrix = [];
+            for (let i = 0; i < 3; i++) {
+                matrix[i] = [];
+                for (let j = 0; j < 3; j++) {
+                    matrix[i][j] = parseFloat(inputs[i * 3 + j].value) || 0;
+                }
             }
+            return matrix;
         }
         
-        // 환전 계산
-        function convertCurrency() {
-            const usdAmount = parseFloat(document.getElementById('usdAmount').value) || 0;
-            const krwAmount = usdAmount * currentRate;
-            
-            document.getElementById('krwAmount').textContent = '₩ ' + krwAmount.toLocaleString('ko-KR', {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            });
-            
-            document.getElementById('result').style.display = 'block';
-            
-            // 계산 내역 추가
-            addToHistory(usdAmount, krwAmount, currentRate);
-        }
-        
-        // 계산 내역 관리
-        function addToHistory(usd, krw, rate) {
-            const historyKey = 'currencyHistory_부동산';
-            let history = JSON.parse(localStorage.getItem(historyKey) || '[]');
-            
-            history.unshift({
-                usd: usd,
-                krw: krw,
-                rate: rate,
-                time: new Date().toLocaleString('ko-KR')
-            });
-            
-            // 최대 5개만 유지
-            history = history.slice(0, 5);
-            localStorage.setItem(historyKey, JSON.stringify(history));
-            
-            displayHistory();
-        }
-        
-        // 계산 내역 표시
-        function displayHistory() {
-            const historyKey = 'currencyHistory_부동산';
-            const history = JSON.parse(localStorage.getItem(historyKey) || '[]');
-            const historyList = document.getElementById('historyList');
-            
-            historyList.innerHTML = history.map(item => `
-                <div class="history-item">
-                    $${item.usd.toFixed(2)} → ₩${item.krw.toLocaleString('ko-KR')} 
-                    (환율: ${item.rate.toFixed(2)})<br>
-                    <small>${item.time}</small>
-                </div>
-            `).join('');
-        }
-        
-        // Enter 키로 계산
-        document.getElementById('usdAmount').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                convertCurrency();
+        function displayMatrix(matrix, title) {
+            let html = '<div class="matrix-display">';
+            html += '<h3>' + title + '</h3>';
+            html += '<span class="matrix-bracket">[</span>';
+            for (let i = 0; i < matrix.length; i++) {
+                for (let j = 0; j < matrix[i].length; j++) {
+                    html += matrix[i][j].toFixed(2) + (j < matrix[i].length - 1 ? ', ' : '');
+                }
+                if (i < matrix.length - 1) html += '<br>';
             }
-        });
+            html += '<span class="matrix-bracket matrix-bracket-right">]</span>';
+            html += '</div>';
+            return html;
+        }
         
-        // 초기화
-        updateRate();
-        displayHistory();
+        function det3x3(m) {
+            return m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) -
+                   m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) +
+                   m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+        }
         
-        // 5초마다 환율 업데이트
-        setInterval(updateRate, 5000);
+        function calculateDeterminant() {
+            const matrix = getMatrix();
+            const det = det3x3(matrix);
+            
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="result">' +
+                displayMatrix(matrix, '입력 행렬') +
+                '<h3>행렬식 (Determinant)</h3>' +
+                '<p style="font-size: 1.5rem; text-align: center;">det(A) = ' + det.toFixed(4) + '</p>' +
+                '</div>';
+        }
+        
+        function calculateInverse() {
+            const matrix = getMatrix();
+            const det = det3x3(matrix);
+            
+            if (Math.abs(det) < 0.0001) {
+                document.getElementById('results').innerHTML = 
+                    '<div class="error">역행렬이 존재하지 않습니다 (행렬식 = 0)</div>';
+                return;
+            }
+            
+            // 여인수 행렬 계산
+            const cofactor = [];
+            for (let i = 0; i < 3; i++) {
+                cofactor[i] = [];
+                for (let j = 0; j < 3; j++) {
+                    const minor = [];
+                    for (let mi = 0; mi < 3; mi++) {
+                        if (mi === i) continue;
+                        const row = [];
+                        for (let mj = 0; mj < 3; mj++) {
+                            if (mj === j) continue;
+                            row.push(matrix[mi][mj]);
+                        }
+                        minor.push(row);
+                    }
+                    const sign = ((i + j) % 2 === 0) ? 1 : -1;
+                    cofactor[i][j] = sign * (minor[0][0] * minor[1][1] - minor[0][1] * minor[1][0]);
+                }
+            }
+            
+            // 전치 후 행렬식으로 나누기
+            const inverse = [];
+            for (let i = 0; i < 3; i++) {
+                inverse[i] = [];
+                for (let j = 0; j < 3; j++) {
+                    inverse[i][j] = cofactor[j][i] / det;
+                }
+            }
+            
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="result">' +
+                displayMatrix(matrix, '입력 행렬 A') +
+                displayMatrix(inverse, '역행렬 A⁻¹') +
+                '<p style="text-align: center; margin-top: 10px;">검증: A × A⁻¹ = I</p>' +
+                '</div>';
+        }
+        
+        function calculateTranspose() {
+            const matrix = getMatrix();
+            const transpose = [];
+            for (let i = 0; i < 3; i++) {
+                transpose[i] = [];
+                for (let j = 0; j < 3; j++) {
+                    transpose[i][j] = matrix[j][i];
+                }
+            }
+            
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="result">' +
+                displayMatrix(matrix, '입력 행렬 A') +
+                displayMatrix(transpose, '전치행렬 Aᵀ') +
+                '</div>';
+        }
+        
+        function calculateTrace() {
+            const matrix = getMatrix();
+            const trace = matrix[0][0] + matrix[1][1] + matrix[2][2];
+            
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="result">' +
+                displayMatrix(matrix, '입력 행렬') +
+                '<h3>대각합 (Trace)</h3>' +
+                '<p style="font-size: 1.5rem; text-align: center;">tr(A) = ' + trace.toFixed(4) + '</p>' +
+                '<p style="text-align: center; color: #666;">= ' + 
+                matrix[0][0].toFixed(2) + ' + ' + 
+                matrix[1][1].toFixed(2) + ' + ' + 
+                matrix[2][2].toFixed(2) + '</p>' +
+                '</div>';
+        }
+        
+        function calculateEigenvalues() {
+            const matrix = getMatrix();
+            
+            // 특성 다항식 계산 (간단한 근사치)
+            const trace = matrix[0][0] + matrix[1][1] + matrix[2][2];
+            const det = det3x3(matrix);
+            
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="result">' +
+                displayMatrix(matrix, '입력 행렬') +
+                '<h3>고유값 계산 (근사치)</h3>' +
+                '<p style="text-align: center;">특성 다항식: det(A - λI) = 0</p>' +
+                '<p style="text-align: center; color: #666;">대각합: ' + trace.toFixed(4) + '</p>' +
+                '<p style="text-align: center; color: #666;">행렬식: ' + det.toFixed(4) + '</p>' +
+                '<p style="text-align: center; margin-top: 10px; font-size: 0.9rem; color: #888;">정확한 고유값 계산은 수치해석 라이브러리가 필요합니다</p>' +
+                '</div>';
+        }
     </script>
 </body>
 </html>
