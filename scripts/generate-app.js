@@ -73,22 +73,21 @@ const trendingAppTemplates = {
     }
   ],
   
-  // 기술/IT 관련
-  technology: [
-    {
-      type: 'AI 대화 시뮬레이터',
-      template: (keyword, data) => generateAIChat(keyword, data)
-    },
-    {
-      type: '기술 트렌드 타임라인',
-      template: (keyword, data) => generateTechTimeline(keyword, data)
-    },
-    {
-      type: '스펙 비교 도구',
-      template: (keyword, data) => generateSpecCompare(keyword, data)
-    }
-  ],
-  
+// 기술/IT 관련
+technology: [
+  {
+    type: 'AI 대화 시뮬레이터',
+    template: (keyword, data) => generateAIChat(keyword, data)
+  },
+  {
+    type: '키워드 빙고 게임',
+    template: (keyword, data) => generateKeywordBingo(keyword, data)  // 있는 함수로 대체
+  },
+  {
+    type: '팬덤 퀴즈',
+    template: (keyword, data) => generateFanQuiz(keyword, data)  // 있는 함수로 대체
+  }
+],
   // 날씨/환경 관련
   weather: [
     {
