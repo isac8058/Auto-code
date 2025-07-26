@@ -2182,3 +2182,586 @@ function generateFanQuiz(keyword, data) {
 if (require.main === module) {
   generateTrendingApps().catch(console.error);
 }
+// 기술 트렌드 타임라인 템플릿
+function generateTechTimeline(keyword, data) {
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${keyword} 기술 타임라인</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0f0f0f;
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            background: linear-gradient(45deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+        }
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #00ff88, #00d4ff);
+            transform: translateX(-50%);
+        }
+        .event {
+            position: relative;
+            margin: 40px 0;
+            display: flex;
+            align-items: center;
+        }
+        .event:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+        .event-content {
+            width: 45%;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .event-content:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0,255,136,0.3);
+        }
+        .event-dot {
+            width: 20px;
+            height: 20px;
+            background: #00ff88;
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 20px #00ff88;
+        }
+        .event-date {
+            font-size: 0.9rem;
+            color: #00ff88;
+            margin-bottom: 10px;
+        }
+        .event-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        .event-description {
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+        }
+        .trend-info {
+            text-align: center;
+            background: rgba(0,255,136,0.1);
+            border: 1px solid #00ff88;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+        }
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 30px;
+            }
+            .event {
+                flex-direction: column !important;
+                margin-left: 50px;
+            }
+            .event-content {
+                width: 100%;
+            }
+            .event-dot {
+                left: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>${keyword} 기술 발전 타임라인</h1>
+        
+        <div class="trend-info">
+            📈 ${data.description}<br>
+            <small>출처: ${data.source}</small>
+        </div>
+        
+        <div class="timeline" id="timeline"></div>
+    </div>
+    
+    <script>
+        const events = [
+            {
+                date: '2020년',
+                title: '${keyword} 초기 개발',
+                description: '혁신적인 기술의 시작점이 되었습니다.'
+            },
+            {
+                date: '2021년',
+                title: '프로토타입 공개',
+                description: '첫 번째 실용적인 데모가 공개되어 큰 관심을 받았습니다.'
+            },
+            {
+                date: '2022년',
+                title: '상용화 시작',
+                description: '일반 사용자들도 사용할 수 있게 되었습니다.'
+            },
+            {
+                date: '2023년',
+                title: '대중화 단계',
+                description: '${keyword} 기술이 일상생활에 통합되기 시작했습니다.'
+            },
+            {
+                date: '2024년',
+                title: '혁신적 발전',
+                description: '기술의 성능이 비약적으로 향상되었습니다.'
+            },
+            {
+                date: '2025년 (현재)',
+                title: '${keyword} 새로운 전환점',
+                description: '${data.description}'
+            }
+        ];
+        
+        const timeline = document.getElementById('timeline');
+        
+        events.forEach((event, index) => {
+            const eventEl = document.createElement('div');
+            eventEl.className = 'event';
+            eventEl.innerHTML = \`
+                <div class="event-content">
+                    <div class="event-date">\${event.date}</div>
+                    <div class="event-title">\${event.title}</div>
+                    <div class="event-description">\${event.description}</div>
+                </div>
+                <div class="event-dot"></div>
+            \`;
+            
+            // 애니메이션 효과
+            eventEl.style.opacity = '0';
+            eventEl.style.transform = index % 2 === 0 ? 'translateX(-50px)' : 'translateX(50px)';
+            
+            timeline.appendChild(eventEl);
+            
+            // 순차적으로 나타나는 애니메이션
+            setTimeout(() => {
+                eventEl.style.transition = 'all 0.8s ease';
+                eventEl.style.opacity = '1';
+                eventEl.style.transform = 'translateX(0)';
+            }, index * 200);
+        });
+    </script>
+</body>
+</html>`;
+}
+
+// 선수 통계 비교 템플릿
+function generatePlayerStats(keyword, data) {
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${keyword} 선수 통계 비교</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(to bottom, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        .players-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+        .player-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .player-name {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .stat-bar {
+            margin: 15px 0;
+        }
+        .stat-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        .stat-progress {
+            height: 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .stat-fill {
+            height: 100%;
+            background: linear-gradient(to right, #4CAF50, #8BC34A);
+            transition: width 1s ease;
+        }
+        .vs {
+            font-size: 3rem;
+            font-weight: bold;
+            align-self: center;
+        }
+        .trend-info {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚽ ${keyword} 선수 통계 비교</h1>
+        
+        <div class="trend-info">
+            📊 ${data.description}<br>
+            <small>출처: ${data.source}</small>
+        </div>
+        
+        <div class="players-grid">
+            <div class="player-card">
+                <h2 class="player-name">선수 A</h2>
+                <div id="player1Stats"></div>
+            </div>
+            
+            <div class="vs">VS</div>
+            
+            <div class="player-card">
+                <h2 class="player-name">선수 B</h2>
+                <div id="player2Stats"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const stats = [
+            { name: '골', max: 30 },
+            { name: '어시스트', max: 20 },
+            { name: '패스 성공률', max: 100 },
+            { name: '드리블 성공', max: 50 },
+            { name: '태클 성공', max: 40 }
+        ];
+        
+        function generateRandomStats() {
+            return stats.map(stat => ({
+                ...stat,
+                value: Math.floor(Math.random() * stat.max * 0.7 + stat.max * 0.3)
+            }));
+        }
+        
+        function renderStats(containerId, playerStats) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = playerStats.map(stat => \`
+                <div class="stat-bar">
+                    <div class="stat-label">
+                        <span>\${stat.name}</span>
+                        <span>\${stat.value}</span>
+                    </div>
+                    <div class="stat-progress">
+                        <div class="stat-fill" style="width: 0%" data-width="\${(stat.value / stat.max * 100)}%"></div>
+                    </div>
+                </div>
+            \`).join('');
+            
+            // 애니메이션
+            setTimeout(() => {
+                container.querySelectorAll('.stat-fill').forEach(bar => {
+                    bar.style.width = bar.dataset.width;
+                });
+            }, 100);
+        }
+        
+        renderStats('player1Stats', generateRandomStats());
+        renderStats('player2Stats', generateRandomStats());
+    </script>
+</body>
+</html>`;
+}
+
+// 팀 응원 카운터 템플릿
+function generateTeamSupport(keyword, data) {
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${keyword} 팀 응원 카운터</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .teams {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        .team {
+            padding: 30px;
+            border-radius: 20px;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .team:hover {
+            transform: translateY(-5px);
+        }
+        .team1 {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .team2 {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+        .team-name {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        .support-count {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .support-btn {
+            background: white;
+            color: #333;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .support-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .total-supporters {
+            margin-top: 30px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        .bounce {
+            animation: bounce 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 ${keyword} 응원 배틀</h1>
+        
+        <div class="teams">
+            <div class="team team1" onclick="support(1)">
+                <h2 class="team-name">팀 A</h2>
+                <div class="support-count" id="count1">0</div>
+                <button class="support-btn">응원하기 📣</button>
+            </div>
+            
+            <div class="team team2" onclick="support(2)">
+                <h2 class="team-name">팀 B</h2>
+                <div class="support-count" id="count2">0</div>
+                <button class="support-btn">응원하기 📣</button>
+            </div>
+        </div>
+        
+        <div class="total-supporters">
+            총 <span id="totalCount">0</span>명이 응원 중!
+        </div>
+    </div>
+    
+    <script>
+        // 로컬 스토리지에서 응원 데이터 가져오기
+        const supportKey = 'teamSupport_${keyword}';
+        let supportData = JSON.parse(localStorage.getItem(supportKey) || '{"team1": 0, "team2": 0}');
+        
+        // 초기값에 랜덤 추가 (더 현실적으로)
+        if (supportData.team1 === 0 && supportData.team2 === 0) {
+            supportData.team1 = Math.floor(Math.random() * 50) + 10;
+            supportData.team2 = Math.floor(Math.random() * 50) + 10;
+        }
+        
+        function updateDisplay() {
+            document.getElementById('count1').textContent = supportData.team1;
+            document.getElementById('count2').textContent = supportData.team2;
+            document.getElementById('totalCount').textContent = supportData.team1 + supportData.team2;
+        }
+        
+        function support(team) {
+            const countEl = document.getElementById('count' + team);
+            countEl.classList.add('bounce');
+            
+            if (team === 1) {
+                supportData.team1++;
+            } else {
+                supportData.team2++;
+            }
+            
+            localStorage.setItem(supportKey, JSON.stringify(supportData));
+            updateDisplay();
+            
+            setTimeout(() => {
+                countEl.classList.remove('bounce');
+            }, 500);
+        }
+        
+        // 초기 표시
+        updateDisplay();
+        
+        // 실시간 업데이트 시뮬레이션
+        setInterval(() => {
+            // 가끔 다른 사용자가 투표하는 것처럼
+            if (Math.random() < 0.1) {
+                const randomTeam = Math.random() < 0.5 ? 1 : 2;
+                if (randomTeam === 1) {
+                    supportData.team1++;
+                } else {
+                    supportData.team2++;
+                }
+                updateDisplay();
+            }
+        }, 3000);
+    </script>
+</body>
+</html>`;
+}
+
+// 정책 비교 도구 템플릿
+function generatePolicyCompare(keyword, data) {
+  return generateKeywordBingo(keyword, data); // 임시로 다른 함수 사용
+}
+
+// 선거 카운트다운 템플릿
+function generateElectionCountdown(keyword, data) {
+  return generateKeywordBingo(keyword, data); // 임시로 다른 함수 사용
+}
+
+// 투자 수익률 계산기 템플릿
+function generateROICalculator(keyword, data) {
+  return generateCurrencyCalc(keyword, data); // 임시로 다른 함수 사용
+}
+
+// 물가 상승률 체감 도구 템플릿
+function generateInflationTool(keyword, data) {
+  return generateCurrencyCalc(keyword, data); // 임시로 다른 함수 사용
+}
+
+// 인기도 투표 템플릿
+function generatePopularityVote(keyword, data) {
+  return generatePollSimulator(keyword, data); // 임시로 다른 함수 사용
+}
+
+// 콘텐츠 추천 룰렛 템플릿
+function generateContentRoulette(keyword, data) {
+  return generateKeywordBingo(keyword, data); // 임시로 다른 함수 사용
+}
+
+// 스펙 비교 도구 템플릿
+function generateSpecCompare(keyword, data) {
+  return generatePlayerStats(keyword, data); // 임시로 다른 함수 사용
+}
+
+// 날씨 기분 일기 템플릿
+function generateWeatherMood(keyword, data) {
+  return generateKeywordBingo(keyword, data); // 임시로 다른 함수 사용
+}
+
+// 환경 보호 챌린지 템플릿
+function generateEcoChallenge(keyword, data) {
+  return generateKeywordBingo(keyword, data); // 임시로 다른 함수 사용
+}
+
+// 계절 활동 추천 템플릿
+function generateSeasonActivity(keyword, data) {
+  return generateKeywordBingo(keyword, data); // 임시로 다른 함수 사용
+}
+
+// 증상 체크리스트 템플릿
+function generateSymptomChecker(keyword, data) {
+  return generateKeywordBingo(keyword, data); // 임시로 다른 함수 사용
+}
+
+// 건강 습관 트래커 템플릿
+function generateHealthTracker(keyword, data) {
+  return generateKeywordBingo(keyword, data); // 임시로 다른 함수 사용
+}
+
+// 운동 타이머 템플릿
+function generateExerciseTimer(keyword, data) {
+  return generateKeywordBingo(keyword, data); // 임시로 다른 함수 사용
+}
+
+// 단어 구름 템플릿
+function generateWordCloud(keyword, data) {
+  return generateKeywordBingo(keyword, data); // 임시로 다른 함수 사용
+}
+
+// 해시태그 생성기 템플릿
+function generateHashtagMaker(keyword, data) {
+  return generateKeywordBingo(keyword, data); // 임시로 다른 함수 사용
+}
