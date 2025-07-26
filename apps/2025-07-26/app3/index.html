@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로야구 팀 응원 카운터</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .teams {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        .team {
+            padding: 30px;
+            border-radius: 20px;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        .team:hover {
+            transform: translateY(-5px);
+        }
+        .team1 {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .team2 {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+        .team-name {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        .support-count {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .support-btn {
+            background: white;
+            color: #333;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .support-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .total-supporters {
+            margin-top: 30px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        .bounce {
+            animation: bounce 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 프로야구 응원 배틀</h1>
+        
+        <div class="teams">
+            <div class="team team1" onclick="support(1)">
+                <h2 class="team-name">팀 A</h2>
+                <div class="support-count" id="count1">0</div>
+                <button class="support-btn">응원하기 📣</button>
+            </div>
+            
+            <div class="team team2" onclick="support(2)">
+                <h2 class="team-name">팀 B</h2>
+                <div class="support-count" id="count2">0</div>
+                <button class="support-btn">응원하기 📣</button>
+            </div>
+        </div>
+        
+        <div class="total-supporters">
+            총 <span id="totalCount">0</span>명이 응원 중!
+        </div>
+    </div>
+    
+    <script>
+        // 로컬 스토리지에서 응원 데이터 가져오기
+        const supportKey = 'teamSupport_프로야구';
+        let supportData = JSON.parse(localStorage.getItem(supportKey) || '{"team1": 0, "team2": 0}');
+        
+        // 초기값에 랜덤 추가 (더 현실적으로)
+        if (supportData.team1 === 0 && supportData.team2 === 0) {
+            supportData.team1 = Math.floor(Math.random() * 50) + 10;
+            supportData.team2 = Math.floor(Math.random() * 50) + 10;
+        }
+        
+        function updateDisplay() {
+            document.getElementById('count1').textContent = supportData.team1;
+            document.getElementById('count2').textContent = supportData.team2;
+            document.getElementById('totalCount').textContent = supportData.team1 + supportData.team2;
+        }
+        
+        function support(team) {
+            const countEl = document.getElementById('count' + team);
+            countEl.classList.add('bounce');
+            
+            if (team === 1) {
+                supportData.team1++;
+            } else {
+                supportData.team2++;
+            }
+            
+            localStorage.setItem(supportKey, JSON.stringify(supportData));
+            updateDisplay();
+            
+            setTimeout(() => {
+                countEl.classList.remove('bounce');
+            }, 500);
+        }
+        
+        // 초기 표시
+        updateDisplay();
+        
+        // 실시간 업데이트 시뮬레이션
+        setInterval(() => {
+            // 가끔 다른 사용자가 투표하는 것처럼
+            if (Math.random() < 0.1) {
+                const randomTeam = Math.random() < 0.5 ? 1 : 2;
+                if (randomTeam === 1) {
+                    supportData.team1++;
+                } else {
+                    supportData.team2++;
+                }
+                updateDisplay();
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

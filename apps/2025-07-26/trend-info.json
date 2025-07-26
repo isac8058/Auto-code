@@ -1,0 +1,46 @@
+{
+  "date": "2025-07-26",
+  "keywords": [
+    {
+      "keyword": "부동산",
+      "description": "서울 아파트 가격 반등, 거래량 증가세",
+      "source": "부동산타임즈"
+    },
+    {
+      "keyword": "AI 혁신",
+      "description": "GPT-5 출시 임박, AI 기술 새로운 전환점",
+      "source": "테크뉴스"
+    },
+    {
+      "keyword": "프로야구",
+      "description": "KBO 리그 순위 경쟁 치열, 1위 자리 놓고 3파전",
+      "source": "스포츠투데이"
+    }
+  ],
+  "generatedApps": [
+    {
+      "id": "app1",
+      "name": "부동산 환율 계산기",
+      "keyword": "부동산",
+      "type": "환율 계산기",
+      "category": "finance",
+      "source": "부동산타임즈"
+    },
+    {
+      "id": "app2",
+      "name": "AI 혁신 키워드 빙고 게임",
+      "keyword": "AI 혁신",
+      "type": "키워드 빙고 게임",
+      "category": "technology",
+      "source": "테크뉴스"
+    },
+    {
+      "id": "app3",
+      "name": "프로야구 팀 응원 카운터",
+      "keyword": "프로야구",
+      "type": "팀 응원 카운터",
+      "category": "sports",
+      "source": "스포츠투데이"
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2025-07-26 트렌딩 앱</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        .date {
+            color: rgba(255,255,255,0.8);
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.2rem;
+        }
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        .app-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        .keyword {
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        .app-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        .app-type {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .source {
+            font-size: 0.9rem;
+            color: #999;
+            margin-bottom: 20px;
+        }
+        .launch-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+        .launch-button:hover {
+            opacity: 0.9;
+        }
+        .trend-summary {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 오늘의 트렌딩 앱</h1>
+        <div class="date">2025년 7월 26일 토요일</div>
+        
+        <div class="trend-summary">
+            <p>오늘의 핫 키워드를 기반으로 자동 생성된 인터랙티브 앱 3개</p>
+        </div>
+        
+        <div class="apps-grid">
+            
+                <div class="app-card">
+                    <div class="keyword">부동산</div>
+                    <h2 class="app-title">부동산 환율 계산기</h2>
+                    <p class="app-type">타입: 환율 계산기</p>
+                    <p class="source">출처: 부동산타임즈</p>
+                    <a href="app1/index.html" class="launch-button">
+                        앱 실행하기 →
+                    </a>
+                </div>
+            
+                <div class="app-card">
+                    <div class="keyword">AI 혁신</div>
+                    <h2 class="app-title">AI 혁신 키워드 빙고 게임</h2>
+                    <p class="app-type">타입: 키워드 빙고 게임</p>
+                    <p class="source">출처: 테크뉴스</p>
+                    <a href="app2/index.html" class="launch-button">
+                        앱 실행하기 →
+                    </a>
+                </div>
+            
+                <div class="app-card">
+                    <div class="keyword">프로야구</div>
+                    <h2 class="app-title">프로야구 팀 응원 카운터</h2>
+                    <p class="app-type">타입: 팀 응원 카운터</p>
+                    <p class="source">출처: 스포츠투데이</p>
+                    <a href="app3/index.html" class="launch-button">
+                        앱 실행하기 →
+                    </a>
+                </div>
+            
+        </div>
+    </div>
+</body>
+</html>

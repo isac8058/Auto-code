@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 혁신 트렌드 빙고</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .keyword-highlight {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        .trend-context {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #856404;
+        }
+        .bingo-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .bingo-cell {
+            aspect-ratio: 1;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 5px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .bingo-cell:hover {
+            background: #e9ecef;
+            transform: scale(1.05);
+        }
+        .bingo-cell.marked {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        .bingo-cell.center {
+            background: #ffc107;
+            color: #333;
+            font-weight: bold;
+            pointer-events: none;
+        }
+        @keyframes bingo-flash {
+            0%, 100% { background: #28a745; }
+            50% { background: #ffc107; }
+        }
+        .bingo-line {
+            animation: bingo-flash 1s ease-in-out 3;
+        }
+        .score-board {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+        }
+        .bingo-count {
+            font-size: 2rem;
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        .reset-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        .reset-button:hover {
+            background: #5a6268;
+        }
+        .word-list {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .word-item {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 5px;
+            background: #e9ecef;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ff6b6b;
+            position: absolute;
+            animation: fall 3s linear;
+        }
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎯 <span class="keyword-highlight">AI 혁신</span> 트렌드 빙고</h1>
+        
+        <div class="trend-context">
+            📰 GPT-5 출시 임박, AI 기술 새로운 전환점<br>
+            <small>출처: 테크뉴스 | 2025-07-26</small>
+        </div>
+        
+        <div class="score-board">
+            현재 빙고: <span class="bingo-count" id="bingoCount">0</span>개
+        </div>
+        
+        <div class="bingo-board" id="bingoBoard"></div>
+        
+        <button class="reset-button" onclick="resetGame()">🔄 새 게임 시작</button>
+        
+        <div class="word-list">
+            <h3>📝 오늘의 트렌드 키워드</h3>
+            <div id="wordList"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 트렌드 관련 단어 생성
+        function generateTrendWords(keyword) {
+            const baseWords = {
+                'AI': ['GPT', '자동화', '딥러닝', '챗봇', '혁신', '미래', '기술', '알고리즘', '데이터', '예측'],
+                '경제': ['환율', '주식', '투자', '상승', '하락', '금리', '인플레이션', '시장', '거래', '자산'],
+                '스포츠': ['승리', '경기', '선수', '팀', '리그', '우승', '기록', '팬', '응원', '경쟁'],
+                '정치': ['정책', '선거', '투표', '여론', '법안', '국회', '대통령', '정부', '민주', '개혁'],
+                '연예': ['팬', '콘서트', '드라마', '영화', '음악', '스타', '공연', '시청률', '화제', '인기'],
+                '날씨': ['기온', '비', '맑음', '구름', '예보', '태풍', '습도', '바람', '계절', '변화'],
+                '기술': ['스마트폰', '앱', '업데이트', '출시', '혁신', '개발', '플랫폼', '서비스', '네트워크', '보안']
+            };
+            
+            // 키워드에 맞는 단어 찾기
+            let words = [];
+            for (const [key, values] of Object.entries(baseWords)) {
+                if (keyword.includes(key) || key.includes(keyword)) {
+                    words = [...words, ...values];
+                }
+            }
+            
+            // 기본 단어 추가
+            const defaultWords = [keyword, '트렌드', '화제', '뉴스', '이슈', '관심', '급상승', '실시간', '핫토픽', '인기'];
+            words = [...new Set([...words, ...defaultWords])];
+            
+            // 25개로 맞추기 (5x5 빙고)
+            while (words.length < 25) {
+                const randomWords = ['최신', '속보', '발표', '공개', '논란', '기대', '주목', '분석', '전망', '영향'];
+                words.push(randomWords[Math.floor(Math.random() * randomWords.length)]);
+            }
+            
+            return words.slice(0, 25);
+        }
+        
+        let board = [];
+        let markedCells = new Array(25).fill(false);
+        let bingoCount = 0;
+        
+        function initGame() {
+            const words = generateTrendWords('AI 혁신');
+            
+            // 단어 섞기
+            for (let i = words.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [words[i], words[j]] = [words[j], words[i]];
+            }
+            
+            // 가운데는 FREE
+            words[12] = 'FREE';
+            board = words;
+            
+            // 보드 렌더링
+            const boardElement = document.getElementById('bingoBoard');
+            boardElement.innerHTML = '';
+            
+            board.forEach((word, index) => {
+                const cell = document.createElement('div');
+                cell.className = 'bingo-cell';
+                if (index === 12) {
+                    cell.className += ' center marked';
+                    markedCells[12] = true;
+                }
+                cell.textContent = word;
+                cell.onclick = () => toggleCell(index);
+                boardElement.appendChild(cell);
+            });
+            
+            // 단어 목록 표시
+            const wordListElement = document.getElementById('wordList');
+            const uniqueWords = [...new Set(words.filter(w => w !== 'FREE'))];
+            wordListElement.innerHTML = uniqueWords.map(word => 
+                `<span class="word-item">${word}</span>`
+            ).join('');
+            
+            checkBingo();
+        }
+        
+        function toggleCell(index) {
+            if (index === 12) return; // FREE 칸은 클릭 불가
+            
+            markedCells[index] = !markedCells[index];
+            const cells = document.querySelectorAll('.bingo-cell');
+            
+            if (markedCells[index]) {
+                cells[index].classList.add('marked');
+            } else {
+                cells[index].classList.remove('marked');
+            }
+            
+            checkBingo();
+        }
+        
+        function checkBingo() {
+            let newBingoCount = 0;
+            const lines = [];
+            
+            // 가로 체크
+            for (let i = 0; i < 5; i++) {
+                if (markedCells.slice(i * 5, (i + 1) * 5).every(marked => marked)) {
+                    newBingoCount++;
+                    lines.push(...Array(5).fill(0).map((_, j) => i * 5 + j));
+                }
+            }
+            
+            // 세로 체크
+            for (let i = 0; i < 5; i++) {
+                const column = [0, 1, 2, 3, 4].map(row => markedCells[row * 5 + i]);
+                if (column.every(marked => marked)) {
+                    newBingoCount++;
+                    lines.push(...[0, 1, 2, 3, 4].map(row => row * 5 + i));
+                }
+            }
+            
+            // 대각선 체크
+            if ([0, 6, 12, 18, 24].every(i => markedCells[i])) {
+                newBingoCount++;
+                lines.push(0, 6, 12, 18, 24);
+            }
+            if ([4, 8, 12, 16, 20].every(i => markedCells[i])) {
+                newBingoCount++;
+                lines.push(4, 8, 12, 16, 20);
+            }
+            
+            // 빙고 애니메이션
+            if (newBingoCount > bingoCount) {
+                const cells = document.querySelectorAll('.bingo-cell');
+                lines.forEach(index => {
+                    cells[index].classList.add('bingo-line');
+                });
+                
+                // 축하 효과
+                createConfetti();
+                
+                setTimeout(() => {
+                    cells.forEach(cell => cell.classList.remove('bingo-line'));
+                }, 3000);
+            }
+            
+            bingoCount = newBingoCount;
+            document.getElementById('bingoCount').textContent = bingoCount;
+            
+            // 모든 칸을 채웠을 때
+            if (markedCells.filter(m => m).length === 25 && bingoCount > 0) {
+                setTimeout(() => {
+                    alert('🎉 완벽한 빙고! 모든 트렌드를 마스터했습니다!');
+                }, 500);
+            }
+        }
+        
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1'][Math.floor(Math.random() * 4)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+        
+        function resetGame() {
+            markedCells = new Array(25).fill(false);
+            bingoCount = 0;
+            initGame();
+        }
+        
+        // 게임 시작
+        initGame();
+    </script>
+</body>
+</html>
