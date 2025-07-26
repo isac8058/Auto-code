@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>부동산 환율 계산기</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #00C9FF 0%, #92FE9D 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .calculator {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .trend-info {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .currency-input {
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+            font-weight: 500;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 5px;
+        }
+        input[type="number"] {
+            flex: 1;
+            border: none;
+            background: none;
+            padding: 15px;
+            font-size: 1.5rem;
+            outline: none;
+        }
+        .currency-symbol {
+            padding: 0 15px;
+            color: #666;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        .exchange-rate {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f0f8ff;
+            border-radius: 10px;
+        }
+        .rate-display {
+            font-size: 2rem;
+            color: #0066cc;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .rate-change {
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        .rate-up { color: #d32f2f; }
+        .rate-down { color: #388e3c; }
+        .convert-button {
+            width: 100%;
+            padding: 15px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .convert-button:hover {
+            background: #0052a3;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+        .result-amount {
+            font-size: 2.5rem;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .history {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .history-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>💱 부동산 환율 계산기</h1>
+        
+        <div class="trend-info">
+            📈 서울 아파트 가격 반등, 거래량 증가세<br>
+            <small>출처: 부동산타임즈</small>
+        </div>
+        
+        <div class="exchange-rate">
+            <div>현재 USD/KRW 환율</div>
+            <div class="rate-display" id="currentRate">1,387.50</div>
+            <div class="rate-change rate-up" id="rateChange">▲ 12.30 (+0.89%)</div>
+        </div>
+        
+        <div class="currency-input">
+            <label>미국 달러 (USD)</label>
+            <div class="input-group">
+                <span class="currency-symbol">$</span>
+                <input type="number" id="usdAmount" placeholder="0.00" step="0.01">
+            </div>
+        </div>
+        
+        <button class="convert-button" onclick="convertCurrency()">환율 계산하기</button>
+        
+        <div class="result" id="result">
+            <div>한국 원화 (KRW)</div>
+            <div class="result-amount" id="krwAmount">₩ 0</div>
+        </div>
+        
+        <div class="history" id="history">
+            <h3>최근 계산 내역</h3>
+            <div id="historyList"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 실시간 환율 시뮬레이션
+        let baseRate = 1387.50;
+        let currentRate = baseRate;
+        let previousRate = baseRate - 12.30;
+        
+        // 환율 변동 시뮬레이션
+        function updateRate() {
+            // 작은 변동 추가
+            const change = (Math.random() - 0.5) * 2;
+            currentRate += change;
+            
+            const diff = currentRate - previousRate;
+            const percentage = (diff / previousRate * 100).toFixed(2);
+            
+            document.getElementById('currentRate').textContent = currentRate.toFixed(2);
+            
+            const changeElement = document.getElementById('rateChange');
+            if (diff > 0) {
+                changeElement.textContent = '▲ ' + Math.abs(diff).toFixed(2) + ' (+' + Math.abs(percentage) + '%)';
+                changeElement.className = 'rate-change rate-up';
+            } else {
+                changeElement.textContent = '▼ ' + Math.abs(diff).toFixed(2) + ' (-' + Math.abs(percentage) + '%)';
+                changeElement.className = 'rate-change rate-down';
+            }
+        }
+        
+        // 환전 계산
+        function convertCurrency() {
+            const usdAmount = parseFloat(document.getElementById('usdAmount').value) || 0;
+            const krwAmount = usdAmount * currentRate;
+            
+            document.getElementById('krwAmount').textContent = '₩ ' + krwAmount.toLocaleString('ko-KR', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            });
+            
+            document.getElementById('result').style.display = 'block';
+            
+            // 계산 내역 추가
+            addToHistory(usdAmount, krwAmount, currentRate);
+        }
+        
+        // 계산 내역 관리
+        function addToHistory(usd, krw, rate) {
+            const historyKey = 'currencyHistory_부동산';
+            let history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+            
+            history.unshift({
+                usd: usd,
+                krw: krw,
+                rate: rate,
+                time: new Date().toLocaleString('ko-KR')
+            });
+            
+            // 최대 5개만 유지
+            history = history.slice(0, 5);
+            localStorage.setItem(historyKey, JSON.stringify(history));
+            
+            displayHistory();
+        }
+        
+        // 계산 내역 표시
+        function displayHistory() {
+            const historyKey = 'currencyHistory_부동산';
+            const history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+            const historyList = document.getElementById('historyList');
+            
+            historyList.innerHTML = history.map(item => `
+                <div class="history-item">
+                    $${item.usd.toFixed(2)} → ₩${item.krw.toLocaleString('ko-KR')} 
+                    (환율: ${item.rate.toFixed(2)})<br>
+                    <small>${item.time}</small>
+                </div>
+            `).join('');
+        }
+        
+        // Enter 키로 계산
+        document.getElementById('usdAmount').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                convertCurrency();
+            }
+        });
+        
+        // 초기화
+        updateRate();
+        displayHistory();
+        
+        // 5초마다 환율 업데이트
+        setInterval(updateRate, 5000);
+    </script>
+</body>
+</html>
