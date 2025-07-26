@@ -472,7 +472,7 @@ function generateIndexPage(appsDir, appInfo) {
         
         <div class="intro">
             ${appInfo.apps.some(app => app.trend !== '일상 속 과학') ? 
-                `<div class="trend-badge">📰 오늘의 트렌드 반영</div>` : ''}
+                '<div class="trend-badge">📰 오늘의 트렌드 반영</div>' : ''}
             <p>복잡한 물리화학 법칙을 일상생활의 친숙한 예시로 쉽게 배워보세요!</p>
         </div>
         
@@ -485,9 +485,9 @@ function generateIndexPage(appsDir, appInfo) {
                     <div class="app-example">📍 ${app.realExample}</div>
                     <p class="app-description">${app.description}</p>
                     ${app.trend !== '일상 속 과학' ? 
-                        `<p style="font-size: 0.85rem; color: #999; margin-bottom: 15px;">
-                            🔥 관련 트렌드: ${app.trend}
-                        </p>` : ''}
+                        '<p style="font-size: 0.85rem; color: #999; margin-bottom: 15px;">' +
+                            '🔥 관련 트렌드: ' + app.trend +
+                        '</p>' : ''}
                     <a href="${app.id}/index.html" class="launch-button">
                         체험하기 →
                     </a>
@@ -800,10 +800,8 @@ function generateTaxiSpeed() {
         let currentTime = 0;
         
         function updateDisplay() {
-            document.getElementById('distanceValue').textContent = 
-                document.getElementById('targetDistance').value;
-            document.getElementById('speedValue').textContent = 
-                document.getElementById('avgSpeed').value;
+            document.getElementById('distanceValue').textContent = document.getElementById('targetDistance').value;
+            document.getElementById('speedValue').textContent = document.getElementById('avgSpeed').value;
             
             // 예상 시간 계산
             const distance = parseFloat(document.getElementById('targetDistance').value);
@@ -839,8 +837,7 @@ function generateTaxiSpeed() {
                 const currentSpeed = avgSpeed + speedVariation;
                 
                 // 미터기 업데이트
-                document.getElementById('distance').textContent = 
-                    currentDistance.toFixed(1) + ' km';
+                document.getElementById('distance').textContent = currentDistance.toFixed(1) + ' km';
                 document.getElementById('time').textContent = formatTime(currentTime);
                 document.getElementById('currentSpeed').textContent = Math.max(0, currentSpeed).toFixed(0) + ' km/h';
                 
@@ -1202,10 +1199,8 @@ function generateKimchiFermentation() {
         let currentDay = 0;
         
         function updateDisplay() {
-            document.getElementById('tempValue').textContent = 
-                document.getElementById('temperature').value;
-            document.getElementById('saltValue').textContent = 
-                document.getElementById('salinity').value;
+            document.getElementById('tempValue').textContent = document.getElementById('temperature').value;
+            document.getElementById('saltValue').textContent = document.getElementById('salinity').value;
         }
         
         function updateFermentation() {
@@ -1226,9 +1221,9 @@ function generateKimchiFermentation() {
             // 김치 색깔 변화
             const kimchi = document.getElementById('kimchiContent');
             const redness = Math.min(100, days * 3);
-            kimchi.style.background = `linear-gradient(to bottom, 
-                hsl(0, ${redness}%, 50%) 0%, 
-                hsl(0, ${redness}%, 40%) 100%)`;
+            kimchi.style.background = 'linear-gradient(to bottom, ' +
+                'hsl(0, ' + redness + '%, 50%) 0%, ' +
+                'hsl(0, ' + redness + '%, 40%) 100%)';
             
             // 상태 업데이트
             let status = '';
@@ -1241,8 +1236,7 @@ function generateKimchiFermentation() {
             
             // 유산균 수 증가
             const bacteria = Math.min(9, 6 + days * 0.1);
-            document.getElementById('bacteriaCount').textContent = 
-                `10^${bacteria.toFixed(0)} CFU/mL`;
+            document.getElementById('bacteriaCount').textContent = '10^' + bacteria.toFixed(0) + ' CFU/mL';
             
             // 젖산 농도
             const lactic = (days * 0.1).toFixed(1);
@@ -1658,8 +1652,7 @@ function generateBatteryLife() {
             
             // 차트 업데이트
             const maxHeight = 180;
-            document.getElementById('currentPower').style.height = 
-                (totalPower / 1000 * maxHeight) + 'px';
+            document.getElementById('currentPower').style.height = (totalPower / 1000 * maxHeight) + 'px';
             
             return totalPower;
         }
@@ -1691,10 +1684,8 @@ function generateBatteryLife() {
                 const drainRate = (totalPower / capacity) * 10;
                 batteryLevel = Math.max(0, batteryLevel - drainRate);
                 
-                document.getElementById('batteryPercent').textContent = 
-                    Math.round(batteryLevel) + '%';
-                document.getElementById('batteryFill').style.width = 
-                    batteryLevel + '%';
+                document.getElementById('batteryPercent').textContent = Math.round(batteryLevel) + '%';
+                document.getElementById('batteryFill').style.width = batteryLevel + '%';
                 
                 // 배터리 색상 변경
                 const fill = document.getElementById('batteryFill');
@@ -1708,17 +1699,14 @@ function generateBatteryLife() {
                 
                 // 결과 업데이트
                 document.getElementById('totalPower').textContent = totalPower;
-                document.getElementById('estimatedTime').textContent = 
-                    (capacity / totalPower).toFixed(1);
+                document.getElementById('estimatedTime').textContent = (capacity / totalPower).toFixed(1);
                 
                 const chargesPerDay = (24 / (capacity / totalPower)).toFixed(1);
                 document.getElementById('chargesPerDay').textContent = chargesPerDay;
                 
-                // 연간 전기료 계산 (대략적)
                 const yearlyKWh = capacity * 3.7 * chargesPerDay * 365 / 1000000;
                 const yearlyElectricCost = Math.round(yearlyKWh * 120); // 120원/kWh
-                document.getElementById('yearlyElectricCost').textContent = 
-                    yearlyElectricCost.toLocaleString();
+                document.getElementById('yearlyElectricCost').textContent = yearlyElectricCost.toLocaleString();
                 
                 // 충전 사이클 증가
                 if (batteryLevel <= 0) {
