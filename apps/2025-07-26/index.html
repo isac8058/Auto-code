@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My 일상 랜덤 생성기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        .app-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #ec4899;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+        
+        .description {
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .main-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #ec4899;
+            margin: 2rem 0;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: #ec4899;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .meta-info {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+            font-size: 0.875rem;
+            color: #999;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: #f0f0f0;
+            border-radius: 20px;
+            margin: 0.25rem;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <h1>My 일상 랜덤 생성기</h1>
+        <p class="description">일상을(를) 좋아하시나요? 이 랜덤 생성기 앱으로 엔터테인먼트를 향상시켜보세요.</p>
+        
+        <div class="main-display" id="display">
+            시작하려면 버튼을 클릭하세요!
+        </div>
+        
+        <div class="button-group" id="buttons">
+            <!-- 버튼들이 여기에 동적으로 추가됩니다 -->
+        </div>
+        
+        <div class="meta-info">
+            <div>
+                <span class="badge">엔터테인먼트</span>
+                <span class="badge">일상</span>
+                <span class="badge">랜덤 생성기</span>
+            </div>
+            <p style="margin-top: 1rem">생성일: 2025. 7. 26.</p>
+        </div>
+    </div>
+    
+    <script>
+        
+        const items = ['일상1', '일상2', '일상3', '일상4', '일상5'];
+        
+        const display = document.getElementById('display');
+        const buttons = document.getElementById('buttons');
+        
+        buttons.innerHTML = `
+            <button onclick="generate()">🎲 생성하기</button>
+            <button onclick="clearDisplay()">지우기</button>
+        `;
+        
+        function generate() {
+            const randomIndex = Math.floor(Math.random() * items.length);
+            display.textContent = items[randomIndex];
+            
+            // 애니메이션 효과
+            display.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                display.style.transform = 'scale(1)';
+            }, 200);
+        }
+        
+        function clearDisplay() {
+            display.textContent = '시작하려면 버튼을 클릭하세요!';
+        }
+    
+    </script>
+</body>
+</html>
