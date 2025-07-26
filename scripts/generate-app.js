@@ -2181,7 +2181,6 @@ function generateFanQuiz(keyword, data) {
 // 메인 실행
 if (require.main === module) {
   generateTrendingApps().catch(console.error);
-}
 // 기술 트렌드 타임라인 템플릿
 function generateTechTimeline(keyword, data) {
   return `<!DOCTYPE html>
@@ -2764,4 +2763,5 @@ function generateWordCloud(keyword, data) {
 // 해시태그 생성기 템플릿
 function generateHashtagMaker(keyword, data) {
   return generateKeywordBingo(keyword, data); // 임시로 다른 함수 사용
+}
 }
