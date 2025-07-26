@@ -3,295 +3,344 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>공대생 포모도로 타이머</title>
+    <title>스타벅스 신메뉴 완벽한 추출 과학</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #6F4E37 0%, #3E2723 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 20px;
+            color: white;
         }
         .container {
-            background: white;
-            border-radius: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
             padding: 40px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
         }
         h1 {
-            color: #333;
+            text-align: center;
             margin-bottom: 30px;
+            font-size: 2.5rem;
         }
-        .timer-display {
-            font-size: 5rem;
-            font-weight: bold;
-            color: #1e3c72;
-            margin: 30px 0;
-            font-family: 'Courier New', monospace;
-        }
-        .timer-ring {
-            width: 250px;
-            height: 250px;
+        .coffee-machine {
+            width: 300px;
+            height: 400px;
             margin: 0 auto 30px;
             position: relative;
+            background: linear-gradient(180deg, #8D6E63 0%, #5D4037 100%);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        .timer-ring svg {
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
-        }
-        .timer-ring circle {
-            fill: none;
-            stroke-width: 10;
-        }
-        .timer-ring-bg {
-            stroke: #e0e0e0;
-        }
-        .timer-ring-progress {
-            stroke: #4CAF50;
-            stroke-linecap: round;
-            transition: stroke-dashoffset 1s linear;
-        }
-        .controls {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-        button {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 25px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-        }
-        .start-btn {
-            background: #4CAF50;
-            color: white;
-        }
-        .start-btn:hover {
-            background: #45a049;
-            transform: scale(1.05);
-        }
-        .pause-btn {
-            background: #ff9800;
-            color: white;
-        }
-        .reset-btn {
-            background: #f44336;
-            color: white;
-        }
-        .session-info {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-top: 30px;
-        }
-        .info-box {
-            background: #f5f5f5;
-            padding: 15px;
+        .water-tank {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 100px;
+            background: rgba(33, 150, 243, 0.3);
+            border: 2px solid #2196F3;
             border-radius: 10px;
         }
-        .info-label {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 5px;
+        .water-level {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: #2196F3;
+            border-radius: 0 0 8px 8px;
+            transition: height 0.5s ease;
         }
-        .info-value {
+        .portafilter {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 60px;
+            background: #424242;
+            border-radius: 0 0 60px 60px;
+        }
+        .coffee-stream {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 0;
+            background: linear-gradient(180deg, #6F4E37 0%, #8D6E63 100%);
+            transition: height 1s ease;
+        }
+        .cup {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 60px;
+            background: white;
+            border-radius: 0 0 40px 40px;
+        }
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .control-card {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .control-card h3 {
+            margin-bottom: 15px;
+            color: #FFD54F;
+        }
+        .slider-container {
+            margin-bottom: 15px;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .value-display {
+            text-align: center;
             font-size: 1.5rem;
-            font-weight: bold;
-            color: #333;
-        }
-        .subjects {
-            margin-top: 20px;
-            text-align: left;
-        }
-        .subject-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            background: #f9f9f9;
-            margin-bottom: 5px;
-            border-radius: 5px;
-        }
-        .phase {
-            font-size: 1.2rem;
-            color: #666;
+            color: #FFD54F;
             margin-bottom: 10px;
+        }
+        .formula-display {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+        }
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .result-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .result-value {
+            font-size: 1.8rem;
+            color: #4CAF50;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        .brew-button {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(45deg, #FF6F00, #FFD54F);
+            color: #3E2723;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        .brew-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 111, 0, 0.5);
+        }
+        .quality-meter {
+            width: 100%;
+            height: 30px;
+            background: #333;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        .quality-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f44336 0%, #FFEB3B 50%, #4CAF50 100%);
+            width: 0%;
+            transition: width 1s ease;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🍅 공대생 포모도로 타이머</h1>
+        <h1>☕ 스타벅스 신메뉴 완벽한 추출 과학</h1>
         
-        <div class="phase" id="phase">집중 시간</div>
+        <div class="coffee-machine">
+            <div class="water-tank">
+                <div class="water-level" id="waterLevel" style="height: 70%"></div>
+            </div>
+            <div class="portafilter"></div>
+            <div class="coffee-stream" id="coffeeStream"></div>
+            <div class="cup"></div>
+        </div>
         
-        <div class="timer-ring">
-            <svg>
-                <circle class="timer-ring-bg" cx="125" cy="125" r="120"></circle>
-                <circle class="timer-ring-progress" id="progress" cx="125" cy="125" r="120"
-                        stroke-dasharray="754" stroke-dashoffset="0"></circle>
-            </svg>
-            <div class="timer-display" id="timer" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                25:00
+        <div class="controls-grid">
+            <div class="control-card">
+                <h3>🌡️ 물 온도</h3>
+                <div class="value-display"><span id="tempValue">93</span>°C</div>
+                <input type="range" id="temperature" min="85" max="98" value="93" oninput="updateValues()">
+                <small>이상적: 90-96°C</small>
+            </div>
+            
+            <div class="control-card">
+                <h3>💨 압력</h3>
+                <div class="value-display"><span id="pressureValue">9</span> bar</div>
+                <input type="range" id="pressure" min="6" max="12" value="9" oninput="updateValues()">
+                <small>이상적: 8-10 bar</small>
+            </div>
+            
+            <div class="control-card">
+                <h3>⏱️ 추출 시간</h3>
+                <div class="value-display"><span id="timeValue">25</span>초</div>
+                <input type="range" id="extractTime" min="15" max="35" value="25" oninput="updateValues()">
+                <small>이상적: 20-30초</small>
+            </div>
+            
+            <div class="control-card">
+                <h3>⚖️ 분쇄도</h3>
+                <div class="value-display"><span id="grindValue">중간</span></div>
+                <input type="range" id="grindSize" min="1" max="5" value="3" oninput="updateValues()">
+                <small>1:극세분 ~ 5:조분</small>
             </div>
         </div>
         
-        <div class="controls">
-            <button class="start-btn" id="startBtn" onclick="startTimer()">시작</button>
-            <button class="pause-btn" id="pauseBtn" onclick="pauseTimer()" style="display: none;">일시정지</button>
-            <button class="reset-btn" onclick="resetTimer()">리셋</button>
+        <div class="formula-display">
+            <h3>추출 방정식</h3>
+            <p>추출률(%) = (용해된 고형물 / 원두 중량) × 100</p>
+            <p>TDS = 1.2 × (압력^0.5) × (온도/100) × (시간/30)</p>
         </div>
         
-        <div class="session-info">
-            <div class="info-box">
-                <div class="info-label">오늘 완료</div>
-                <div class="info-value" id="todayCount">0</div>
-            </div>
-            <div class="info-box">
-                <div class="info-label">총 공부 시간</div>
-                <div class="info-value" id="totalTime">0시간</div>
-            </div>
-            <div class="info-box">
-                <div class="info-label">현재 스트릭</div>
-                <div class="info-value" id="streak">0일</div>
-            </div>
+        <button class="brew-button" onclick="startBrewing()">☕ 추출 시작!</button>
+        
+        <div class="quality-meter">
+            <div class="quality-fill" id="qualityFill"></div>
         </div>
         
-        <div class="subjects">
-            <h3>과목별 공부 시간</h3>
-            <div class="subject-item">
-                <span>미적분학</span>
-                <span>2.5시간</span>
+        <div class="result-grid">
+            <div class="result-item">
+                <div>추출률</div>
+                <div class="result-value" id="extractionRate">0%</div>
             </div>
-            <div class="subject-item">
-                <span>물리학</span>
-                <span>1.8시간</span>
+            <div class="result-item">
+                <div>TDS</div>
+                <div class="result-value" id="tds">0</div>
             </div>
-            <div class="subject-item">
-                <span>프로그래밍</span>
-                <span>3.2시간</span>
+            <div class="result-item">
+                <div>커피 강도</div>
+                <div class="result-value" id="strength">-</div>
+            </div>
+            <div class="result-item">
+                <div>맛 밸런스</div>
+                <div class="result-value" id="balance">-</div>
             </div>
         </div>
     </div>
     
     <script>
-        let timeLeft = 25 * 60; // 25분
-        let isRunning = false;
-        let interval;
-        let isBreak = false;
-        let sessionsCompleted = 0;
-        
-        const circumference = 2 * Math.PI * 120;
-        
-        function updateDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            document.getElementById('timer').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        function updateValues() {
+            const temp = document.getElementById('temperature').value;
+            const pressure = document.getElementById('pressure').value;
+            const time = document.getElementById('extractTime').value;
+            const grind = document.getElementById('grindSize').value;
             
-            // 프로그레스 링 업데이트
-            const totalTime = isBreak ? 5 * 60 : 25 * 60;
-            const progress = (totalTime - timeLeft) / totalTime;
-            const offset = circumference - (progress * circumference);
-            document.getElementById('progress').style.strokeDashoffset = offset;
+            document.getElementById('tempValue').textContent = temp;
+            document.getElementById('pressureValue').textContent = pressure;
+            document.getElementById('timeValue').textContent = time;
+            
+            const grindNames = ['극세분', '세분', '중간', '조분', '극조분'];
+            document.getElementById('grindValue').textContent = grindNames[grind - 1];
         }
         
-        function startTimer() {
-            if (!isRunning) {
-                isRunning = true;
-                document.getElementById('startBtn').style.display = 'none';
-                document.getElementById('pauseBtn').style.display = 'inline-block';
-                
-                interval = setInterval(() => {
-                    if (timeLeft > 0) {
-                        timeLeft--;
-                        updateDisplay();
-                    } else {
-                        // 타이머 종료
-                        clearInterval(interval);
-                        isRunning = false;
-                        
-                        if (!isBreak) {
-                            sessionsCompleted++;
-                            document.getElementById('todayCount').textContent = sessionsCompleted;
-                            
-                            // 휴식 시간으로 전환
-                            isBreak = true;
-                            timeLeft = 5 * 60;
-                            document.getElementById('phase').textContent = '휴식 시간';
-                            document.getElementById('progress').style.stroke = '#2196F3';
-                            
-                            // 알림
-                            alert('수고하셨습니다! 5분 휴식하세요.');
-                        } else {
-                            // 집중 시간으로 전환
-                            isBreak = false;
-                            timeLeft = 25 * 60;
-                            document.getElementById('phase').textContent = '집중 시간';
-                            document.getElementById('progress').style.stroke = '#4CAF50';
-                            
-                            alert('휴식 끝! 다시 집중해봅시다.');
-                        }
-                        
-                        updateDisplay();
-                        document.getElementById('startBtn').style.display = 'inline-block';
-                        document.getElementById('pauseBtn').style.display = 'none';
-                    }
-                }, 1000);
+        function startBrewing() {
+            const temp = parseFloat(document.getElementById('temperature').value);
+            const pressure = parseFloat(document.getElementById('pressure').value);
+            const time = parseFloat(document.getElementById('extractTime').value);
+            const grind = parseFloat(document.getElementById('grindSize').value);
+            
+            // 시각적 효과
+            const waterLevel = document.getElementById('waterLevel');
+            const coffeeStream = document.getElementById('coffeeStream');
+            
+            waterLevel.style.height = '30%';
+            coffeeStream.style.height = '60px';
+            
+            setTimeout(() => {
+                coffeeStream.style.height = '0';
+                calculateResults(temp, pressure, time, grind);
+            }, 2000);
+        }
+        
+        function calculateResults(temp, pressure, time, grind) {
+            // 추출률 계산 (이상적: 18-22%)
+            let extractionRate = 18;
+            extractionRate += (temp - 90) * 0.3;
+            extractionRate += (pressure - 9) * 0.5;
+            extractionRate += (time - 25) * 0.2;
+            extractionRate += (3 - grind) * 1.5;
+            extractionRate = Math.max(15, Math.min(25, extractionRate));
+            
+            // TDS 계산 (Total Dissolved Solids)
+            const tds = 1.2 * Math.sqrt(pressure) * (temp/100) * (time/30);
+            
+            // 품질 점수 계산
+            let quality = 50;
+            
+            // 온도 점수
+            if (temp >= 90 && temp <= 96) quality += 20;
+            else quality += Math.max(0, 20 - Math.abs(93 - temp));
+            
+            // 압력 점수
+            if (pressure >= 8 && pressure <= 10) quality += 20;
+            else quality += Math.max(0, 20 - Math.abs(9 - pressure) * 5);
+            
+            // 시간 점수
+            if (time >= 20 && time <= 30) quality += 10;
+            else quality += Math.max(0, 10 - Math.abs(25 - time) * 0.5);
+            
+            quality = Math.min(100, quality);
+            
+            // 결과 표시
+            document.getElementById('extractionRate').textContent = extractionRate.toFixed(1) + '%';
+            document.getElementById('tds').textContent = tds.toFixed(2);
+            
+            // 강도 판정
+            let strength = '약함';
+            if (tds > 1.2 && tds <= 1.35) strength = '적당';
+            else if (tds > 1.35) strength = '강함';
+            document.getElementById('strength').textContent = strength;
+            
+            // 밸런스 판정
+            let balance = '언밸런스';
+            if (extractionRate >= 18 && extractionRate <= 22 && quality > 70) {
+                balance = '완벽';
+            } else if (quality > 60) {
+                balance = '양호';
             }
-        }
-        
-        function pauseTimer() {
-            if (isRunning) {
-                clearInterval(interval);
-                isRunning = false;
-                document.getElementById('startBtn').style.display = 'inline-block';
-                document.getElementById('pauseBtn').style.display = 'none';
-            }
-        }
-        
-        function resetTimer() {
-            clearInterval(interval);
-            isRunning = false;
-            isBreak = false;
-            timeLeft = 25 * 60;
-            document.getElementById('phase').textContent = '집중 시간';
-            document.getElementById('progress').style.stroke = '#4CAF50';
-            updateDisplay();
-            document.getElementById('startBtn').style.display = 'inline-block';
-            document.getElementById('pauseBtn').style.display = 'none';
-        }
-        
-        // 로컬 스토리지에서 통계 불러오기
-        function loadStats() {
-            const stats = JSON.parse(localStorage.getItem('pomodoroStats') || '{}');
-            const today = new Date().toDateString();
+            document.getElementById('balance').textContent = balance;
             
-            if (stats.lastDate !== today) {
-                stats.todayCount = 0;
-                stats.lastDate = today;
-            }
+            // 품질 미터 업데이트
+            const qualityFill = document.getElementById('qualityFill');
+            qualityFill.style.width = quality + '%';
             
-            sessionsCompleted = stats.todayCount || 0;
-            document.getElementById('todayCount').textContent = sessionsCompleted;
-            
-            const totalHours = Math.floor((stats.totalSessions || 0) * 25 / 60);
-            document.getElementById('totalTime').textContent = totalHours + '시간';
+            // 물 레벨 복구
+            setTimeout(() => {
+                document.getElementById('waterLevel').style.height = '70%';
+            }, 1000);
         }
         
         // 초기화
-        updateDisplay();
-        loadStats();
+        updateValues();
     </script>
 </body>
 </html>
