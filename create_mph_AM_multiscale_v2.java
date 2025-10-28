@@ -86,12 +86,12 @@ public class create_mph_AM_multiscale_v2 {
         new String[]{"0","0","paper_t"});
 
       // Needle array on top of chip, pointing downward into skin
-      int Nx = Integer.parseInt(model.param().evaluate("Nx"));
-      int Ny = Integer.parseInt(model.param().evaluate("Ny"));
-      double pitch = Double.parseDouble(model.param().evaluate("needle_pitch").replaceAll("[^0-9.+-Ee]",""));
+      int Nx = (int)model.param().evaluate("Nx");
+      int Ny = (int)model.param().evaluate("Ny");
+      double pitch = model.param().evaluate("needle_pitch");
 
-      double x0 = 0.5*Double.parseDouble(model.param().evaluate("chip_Lx").replaceAll("[^0-9.+-Ee]",""));
-      double y0 = 0.5*Double.parseDouble(model.param().evaluate("chip_Ly").replaceAll("[^0-9.+-Ee]",""));
+      double x0 = 0.5*model.param().evaluate("chip_Lx");
+      double y0 = 0.5*model.param().evaluate("chip_Ly");
 
       int idx=0;
       for (int i=0;i<Nx;i++) {
@@ -147,7 +147,7 @@ public class create_mph_AM_multiscale_v2 {
       // ---------------- Selections ----------------
       model.component("comp1").selection().create("sel_paper", "Explicit");     // porous paper
       model.component("comp1").selection("sel_paper").geom("geom1", 3);
-      model.component("comp1").selection("sel_paper").set(new int[]{model.component("comp1").geom("geom1").feature("blk_paper").getTagAsInt()}); // may be ignored; set manually if needed
+      // Note: Selection assignments should be done manually in COMSOL GUI or using domain/boundary indices
 
       model.component("comp1").selection().create("sel_chip", "Explicit");
       model.component("comp1").selection("sel_chip").geom("geom1", 3);
@@ -248,7 +248,7 @@ public class create_mph_AM_multiscale_v2 {
       model.result().numerical("gev1").set("descr", new String[]{"CA current","Jacobs cure depth"});
 
       // Save
-      ModelUtil.save("AM_Multiscale_M1toM6_v2.mph");
+      model.save("AM_Multiscale_M1toM6_v2.mph");
       ModelUtil.disconnect();
     } catch (Exception e) {
       e.printStackTrace();
