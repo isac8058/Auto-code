@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스마트폰 배터리 수명 과학</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #2e7d32;
+            margin-bottom: 30px;
+        }
+        .formula-box {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            font-family: 'Courier New', monospace;
+        }
+        .phone-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .phone {
+            width: 250px;
+            height: 500px;
+            background: #263238;
+            border-radius: 30px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .screen {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .battery-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+        .battery-level {
+            width: 80%;
+            height: 30px;
+            background: #333;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .battery-fill {
+            height: 100%;
+            background: linear-gradient(to right, #4caf50, #8bc34a);
+            transition: width 0.5s ease;
+        }
+        .battery-percent {
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .usage-info {
+            flex: 1;
+            max-width: 400px;
+        }
+        .info-card {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .control-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .control-card h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        .app-toggles {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .app-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .toggle-switch {
+            width: 50px;
+            height: 25px;
+            background: #ccc;
+            border-radius: 25px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle-switch.active {
+            background: #4caf50;
+        }
+        .toggle-knob {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2.5px;
+            left: 2.5px;
+            transition: left 0.3s;
+        }
+        .toggle-switch.active .toggle-knob {
+            left: 27.5px;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .simulate-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .simulate-button:hover {
+            transform: scale(1.05);
+        }
+        .results {
+            background: #e8f5e9;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        .power-chart {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            align-items: flex-end;
+            height: 200px;
+        }
+        .power-bar {
+            width: 60px;
+            background: linear-gradient(to top, #ff5252, #ffeb3b, #4caf50);
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            transition: height 0.5s;
+        }
+        .power-label {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+        .tips {
+            background: #fff3e0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 스마트폰 배터리 수명 과학</h1>
+        
+        <div class="formula-box">
+            <h3>전하량(Q) = 전류(I) × 시간(t)</h3>
+            <p style="margin-top: 10px;">배터리 용량: mAh = mA × h</p>
+            <p>사용 시간 = 배터리 용량 ÷ 평균 소비 전류</p>
+        </div>
+        
+        <div class="phone-container">
+            <div class="phone">
+                <div class="screen">
+                    <div class="battery-icon">🔋</div>
+                    <div class="battery-level">
+                        <div class="battery-fill" id="batteryFill" style="width: 100%"></div>
+                    </div>
+                    <div class="battery-percent" id="batteryPercent">100%</div>
+                    <div style="color: white; margin-top: 20px;">
+                        <div>남은 시간: <span id="remainingTime">24시간</span></div>
+                        <div>소비 전력: <span id="currentDraw">200mA</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="usage-info">
+                <div class="info-card">
+                    <h3>📊 배터리 사양</h3>
+                    <p>용량: <strong id="batteryCapacity">4000</strong> mAh</p>
+                    <p>전압: <strong>3.7</strong> V</p>
+                    <p>에너지: <strong id="batteryEnergy">14.8</strong> Wh</p>
+                    <p>충전 사이클: <strong id="chargeCycles">0</strong> 회</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-card">
+                <h3>📱 앱 사용 현황</h3>
+                <div class="app-toggles">
+                    <div class="app-toggle">
+                        <span>🎮 게임</span>
+                        <div class="toggle-switch" onclick="toggleApp(this, 'game')" data-power="500">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                    <div class="app-toggle">
+                        <span>🎬 동영상</span>
+                        <div class="toggle-switch" onclick="toggleApp(this, 'video')" data-power="350">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                    <div class="app-toggle">
+                        <span>📶 WiFi</span>
+                        <div class="toggle-switch active" onclick="toggleApp(this, 'wifi')" data-power="80">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                    <div class="app-toggle">
+                        <span>📍 GPS</span>
+                        <div class="toggle-switch" onclick="toggleApp(this, 'gps')" data-power="150">
+                            <div class="toggle-knob"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-card">
+                <h3>⚙️ 설정</h3>
+                <label>화면 밝기</label>
+                <input type="range" id="brightness" min="0" max="100" value="50" oninput="updatePower()">
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <span id="brightnessValue">50</span>%
+                </div>
+                
+                <label>배터리 용량</label>
+                <input type="range" id="capacity" min="2000" max="6000" value="4000" step="500" oninput="updateCapacity()">
+                <div style="text-align: center;">
+                    <span id="capacityValue">4000</span> mAh
+                </div>
+            </div>
+        </div>
+        
+        <button class="simulate-button" onclick="simulateBattery()">🔋 배터리 사용 시뮬레이션</button>
+        
+        <div class="power-chart">
+            <div style="text-align: center;">
+                <div class="power-bar" id="idlePower" style="height: 20px;">
+                    <div class="power-label">대기</div>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <div class="power-bar" id="normalPower" style="height: 50px;">
+                    <div class="power-label">일반 사용</div>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <div class="power-bar" id="currentPower" style="height: 80px;">
+                    <div class="power-label">현재 설정</div>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <div class="power-bar" id="maxPower" style="height: 180px;">
+                    <div class="power-label">최대 사용</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="results" id="results" style="display: none;">
+            <h3>📊 배터리 분석 결과</h3>
+            <p>현재 소비 전력: <strong id="totalPower">0</strong> mA</p>
+            <p>예상 사용 시간: <strong id="estimatedTime">0</strong> 시간</p>
+            <p>하루 충전 필요 횟수: <strong id="chargesPerDay">0</strong> 회</p>
+            <p>연간 전기료 (충전): <strong id="yearlyElectricCost">0</strong> 원</p>
+        </div>
+        
+        <div class="tips">
+            <h3>💡 배터리 수명 연장 팁</h3>
+            <ul style="margin-left: 20px;">
+                <li>충전은 20~80% 사이에서 유지하세요</li>
+                <li>고온 환경에서 사용을 피하세요</li>
+                <li>화면 밝기를 적절히 조절하세요</li>
+                <li>사용하지 않는 앱은 종료하세요</li>
+                <li>배경 앱 새로고침을 제한하세요</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        let activeApps = { wifi: true };
+        let batteryInterval;
+        
+        function toggleApp(toggle, app) {
+            toggle.classList.toggle('active');
+            activeApps[app] = toggle.classList.contains('active');
+            updatePower();
+        }
+        
+        function updatePower() {
+            const brightness = document.getElementById('brightness').value;
+            document.getElementById('brightnessValue').textContent = brightness;
+            
+            // 기본 전력 소비 (mA)
+            let basePower = 100; // 시스템 기본
+            let screenPower = brightness * 2; // 화면 밝기에 따른 전력
+            
+            // 앱별 전력 소비
+            let appPower = 0;
+            document.querySelectorAll('.toggle-switch.active').forEach(toggle => {
+                appPower += parseInt(toggle.dataset.power);
+            });
+            
+            const totalPower = basePower + screenPower + appPower;
+            document.getElementById('currentDraw').textContent = totalPower + 'mA';
+            
+            // 남은 시간 계산
+            const capacity = parseInt(document.getElementById('capacity').value);
+            const remainingHours = (capacity / totalPower).toFixed(1);
+            document.getElementById('remainingTime').textContent = remainingHours + '시간';
+            
+            // 차트 업데이트
+            const maxHeight = 180;
+            document.getElementById('currentPower').style.height = (totalPower / 1000 * maxHeight) + 'px';
+            
+            return totalPower;
+        }
+        
+        function updateCapacity() {
+            const capacity = document.getElementById('capacity').value;
+            document.getElementById('capacityValue').textContent = capacity;
+            document.getElementById('batteryCapacity').textContent = capacity;
+            
+            // 에너지 계산 (Wh = mAh × V / 1000)
+            const energy = (capacity * 3.7 / 1000).toFixed(1);
+            document.getElementById('batteryEnergy').textContent = energy;
+            
+            updatePower();
+        }
+        
+        function simulateBattery() {
+            clearInterval(batteryInterval);
+            let batteryLevel = 100;
+            let cycles = 0;
+            
+            document.getElementById('results').style.display = 'block';
+            
+            batteryInterval = setInterval(() => {
+                const totalPower = updatePower();
+                const capacity = parseInt(document.getElementById('capacity').value);
+                
+                // 배터리 감소율 (시뮬레이션 가속)
+                const drainRate = (totalPower / capacity) * 10;
+                batteryLevel = Math.max(0, batteryLevel - drainRate);
+                
+                document.getElementById('batteryPercent').textContent = Math.round(batteryLevel) + '%';
+                document.getElementById('batteryFill').style.width = batteryLevel + '%';
+                
+                // 배터리 색상 변경
+                const fill = document.getElementById('batteryFill');
+                if (batteryLevel > 50) {
+                    fill.style.background = 'linear-gradient(to right, #4caf50, #8bc34a)';
+                } else if (batteryLevel > 20) {
+                    fill.style.background = 'linear-gradient(to right, #ffeb3b, #ffc107)';
+                } else {
+                    fill.style.background = 'linear-gradient(to right, #ff5252, #f44336)';
+                }
+                
+                // 결과 업데이트
+                document.getElementById('totalPower').textContent = totalPower;
+                document.getElementById('estimatedTime').textContent = (capacity / totalPower).toFixed(1);
+                
+                const chargesPerDay = (24 / (capacity / totalPower)).toFixed(1);
+                document.getElementById('chargesPerDay').textContent = chargesPerDay;
+                
+                const yearlyKWh = capacity * 3.7 * chargesPerDay * 365 / 1000000;
+                const yearlyElectricCost = Math.round(yearlyKWh * 120); // 120원/kWh
+                document.getElementById('yearlyElectricCost').textContent = yearlyElectricCost.toLocaleString();
+                
+                // 충전 사이클 증가
+                if (batteryLevel <= 0) {
+                    batteryLevel = 100;
+                    cycles++;
+                    document.getElementById('chargeCycles').textContent = cycles;
+                }
+            }, 100);
+        }
+        
+        // 초기화
+        updatePower();
+        updateCapacity();
+    </script>
+</body>
+</html>
