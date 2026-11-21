@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>김치 발효 pH 추적기</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ff5252 0%, #f48fb1 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #d32f2f;
+            margin-bottom: 30px;
+        }
+        .formula-box {
+            background: #ffebee;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            font-family: 'Courier New', monospace;
+        }
+        .fermentation-container {
+            display: flex;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .kimchi-jar {
+            width: 200px;
+            height: 250px;
+            background: linear-gradient(to bottom, #fff 0%, #ffcdd2 100%);
+            border: 3px solid #d32f2f;
+            border-radius: 20px 20px 50px 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        .kimchi-content {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(to bottom, #ff5252 0%, #d32f2f 100%);
+            transition: all 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+        .bubble {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 50%;
+            animation: bubble 3s infinite;
+        }
+        @keyframes bubble {
+            0% { bottom: 20%; opacity: 0; }
+            50% { opacity: 1; }
+            100% { bottom: 90%; opacity: 0; }
+        }
+        .ph-meter {
+            background: #263238;
+            color: #00ff00;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .ph-display {
+            font-size: 3rem;
+            margin: 10px 0;
+        }
+        .ph-scale {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 10px;
+            background: linear-gradient(to right, 
+                #ff0000 0%, 
+                #ff9800 14%, 
+                #ffeb3b 28%, 
+                #8bc34a 42%, 
+                #4caf50 56%, 
+                #2196f3 70%, 
+                #3f51b5 84%, 
+                #9c27b0 100%);
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .control-card {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .control-card h3 {
+            color: #d32f2f;
+            margin-bottom: 15px;
+        }
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .value-display {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        .ferment-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #ff5252, #d32f2f);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .ferment-button:hover {
+            transform: scale(1.05);
+        }
+        .timeline {
+            margin: 30px 0;
+        }
+        .day-marker {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        .day-marker.active {
+            background: #ffebee;
+            transform: translateX(10px);
+        }
+        .day-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+        .chemical-equation {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+        }
+        .bacteria-count {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .bacteria-card {
+            text-align: center;
+            padding: 15px;
+            background: #fff3e0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🥬 김치 발효 pH 추적기</h1>
+        
+        <div class="formula-box">
+            <h3>pH = -log[H⁺]</h3>
+            <p style="margin-top: 10px;">pH가 낮을수록 산성, 높을수록 염기성</p>
+            <p>김치 최적 pH: 4.2 ~ 4.5</p>
+        </div>
+        
+        <div class="fermentation-container">
+            <div>
+                <h3 style="text-align: center; margin-bottom: 10px;">발효 중인 김치</h3>
+                <div class="kimchi-jar">
+                    <div class="kimchi-content" id="kimchiContent" style="height: 80%">
+                        🥬
+                    </div>
+                    <div class="bubble" style="left: 30%; animation-delay: 0s;"></div>
+                    <div class="bubble" style="left: 50%; animation-delay: 1s;"></div>
+                    <div class="bubble" style="left: 70%; animation-delay: 2s;"></div>
+                </div>
+            </div>
+            
+            <div style="flex: 1;">
+                <div class="ph-meter">
+                    <h3>pH 측정기</h3>
+                    <div class="ph-display" id="phDisplay">6.5</div>
+                    <div>현재 상태: <span id="fermentStatus">신선한 김치</span></div>
+                </div>
+                
+                <div class="ph-scale">
+                    <span>0</span>
+                    <span>산성</span>
+                    <span>7</span>
+                    <span>중성</span>
+                    <span>14</span>
+                    <span>염기성</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chemical-equation">
+            <h3>🧪 젖산 발효 반응</h3>
+            <p>C₆H₁₂O₆ (포도당) → 2 C₃H₆O₃ (젖산)</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                유산균이 배추의 당분을 젖산으로 변환 → pH 감소
+            </p>
+        </div>
+        
+        <div class="controls">
+            <div class="control-card">
+                <h3>🌡️ 발효 온도</h3>
+                <input type="range" id="temperature" min="0" max="30" value="20" oninput="updateDisplay()">
+                <div class="value-display"><span id="tempValue">20</span>°C</div>
+            </div>
+            
+            <div class="control-card">
+                <h3>🧂 염도</h3>
+                <input type="range" id="salinity" min="1" max="5" value="2.5" step="0.5" oninput="updateDisplay()">
+                <div class="value-display"><span id="saltValue">2.5</span>%</div>
+            </div>
+            
+            <div class="control-card">
+                <h3>📅 발효 일수</h3>
+                <input type="range" id="days" min="0" max="30" value="0" oninput="updateFermentation()">
+                <div class="value-display"><span id="daysValue">0</span>일</div>
+            </div>
+        </div>
+        
+        <button class="ferment-button" onclick="startFermentation()">🧪 발효 시작!</button>
+        
+        <div class="bacteria-count">
+            <div class="bacteria-card">
+                <h4>유산균 수</h4>
+                <div style="font-size: 2rem;">🦠</div>
+                <div id="bacteriaCount">10⁶ CFU/mL</div>
+            </div>
+            <div class="bacteria-card">
+                <h4>젖산 농도</h4>
+                <div style="font-size: 2rem;">💧</div>
+                <div id="lacticAcid">0.1%</div>
+            </div>
+            <div class="bacteria-card">
+                <h4>비타민 C</h4>
+                <div style="font-size: 2rem;">🍊</div>
+                <div id="vitaminC">100%</div>
+            </div>
+        </div>
+        
+        <div class="timeline" id="timeline">
+            <h3>📅 발효 진행 과정</h3>
+            <div class="day-marker" data-day="0">
+                <div class="day-icon">🥬</div>
+                <div>
+                    <strong>0일차 - 담금</strong>
+                    <p>신선한 배추, pH 6.5, 유산균 활동 시작</p>
+                </div>
+            </div>
+            <div class="day-marker" data-day="3">
+                <div class="day-icon">🫧</div>
+                <div>
+                    <strong>3일차 - 초기 발효</strong>
+                    <p>pH 5.5, 탄산가스 발생, 시큼한 향</p>
+                </div>
+            </div>
+            <div class="day-marker" data-day="7">
+                <div class="day-icon">🌶️</div>
+                <div>
+                    <strong>7일차 - 적숙기</strong>
+                    <p>pH 4.3, 최적의 맛과 영양, 먹기 좋은 상태</p>
+                </div>
+            </div>
+            <div class="day-marker" data-day="14">
+                <div class="day-icon">🍃</div>
+                <div>
+                    <strong>14일차 - 숙성</strong>
+                    <p>pH 4.0, 깊은 맛, 유산균 최대</p>
+                </div>
+            </div>
+            <div class="day-marker" data-day="30">
+                <div class="day-icon">🥃</div>
+                <div>
+                    <strong>30일차 - 묵은지</strong>
+                    <p>pH 3.8, 진한 발효향, 묵은지 특유의 맛</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let fermentationInterval;
+        let currentDay = 0;
+        
+        function updateDisplay() {
+            document.getElementById('tempValue').textContent = document.getElementById('temperature').value;
+            document.getElementById('saltValue').textContent = document.getElementById('salinity').value;
+        }
+        
+        function updateFermentation() {
+            const days = parseInt(document.getElementById('days').value);
+            document.getElementById('daysValue').textContent = days;
+            
+            // pH 계산 (날짜에 따라 감소)
+            const temp = parseFloat(document.getElementById('temperature').value);
+            const salt = parseFloat(document.getElementById('salinity').value);
+            
+            // 온도와 염도에 따른 발효 속도 조정
+            const fermentRate = (temp / 20) * (3 / salt);
+            let pH = 6.5 - (days * 0.08 * fermentRate);
+            pH = Math.max(3.5, pH); // 최소 pH 3.5
+            
+            document.getElementById('phDisplay').textContent = pH.toFixed(1);
+            
+            // 김치 색깔 변화
+            const kimchi = document.getElementById('kimchiContent');
+            const redness = Math.min(100, days * 3);
+            kimchi.style.background = 'linear-gradient(to bottom, ' +
+                'hsl(0, ' + redness + '%, 50%) 0%, ' +
+                'hsl(0, ' + redness + '%, 40%) 100%)';
+            
+            // 상태 업데이트
+            let status = '';
+            if (pH > 5.5) status = '신선한 김치';
+            else if (pH > 4.5) status = '살짝 익은 김치';
+            else if (pH > 4.0) status = '잘 익은 김치 (최적)';
+            else status = '묵은지';
+            
+            document.getElementById('fermentStatus').textContent = status;
+            
+            // 유산균 수 증가
+            const bacteria = Math.min(9, 6 + days * 0.1);
+            document.getElementById('bacteriaCount').textContent = '10^' + bacteria.toFixed(0) + ' CFU/mL';
+            
+            // 젖산 농도
+            const lactic = (days * 0.1).toFixed(1);
+            document.getElementById('lacticAcid').textContent = lactic + '%';
+            
+            // 비타민 C (초기에 증가 후 감소)
+            let vitC = 100 + days * 5;
+            if (days > 7) vitC = 135 - (days - 7) * 2;
+            vitC = Math.max(50, vitC);
+            document.getElementById('vitaminC').textContent = vitC.toFixed(0) + '%';
+            
+            // 타임라인 활성화
+            document.querySelectorAll('.day-marker').forEach(marker => {
+                const markerDay = parseInt(marker.dataset.day);
+                if (days >= markerDay) {
+                    marker.classList.add('active');
+                } else {
+                    marker.classList.remove('active');
+                }
+            });
+        }
+        
+        function startFermentation() {
+            clearInterval(fermentationInterval);
+            currentDay = 0;
+            document.getElementById('days').value = 0;
+            
+            fermentationInterval = setInterval(() => {
+                currentDay++;
+                if (currentDay <= 30) {
+                    document.getElementById('days').value = currentDay;
+                    updateFermentation();
+                } else {
+                    clearInterval(fermentationInterval);
+                }
+            }, 500); // 0.5초마다 1일 경과 (시뮬레이션)
+        }
+        
+        // 초기화
+        updateDisplay();
+        updateFermentation();
+    </script>
+</body>
+</html>
